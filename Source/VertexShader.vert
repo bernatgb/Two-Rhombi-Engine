@@ -13,10 +13,12 @@ out vec2 uv0;
 
 void main()
 {
-	gl_Position = vec4(my_vertex_position, 1.0);
+	//gl_Position = vec4(my_vertex_position, 1.0);
 	// A vertex shaders always has to write special global variable gl_Position.
 	// This variable must contain vertex position after model and view and projection transforms (clipping space).
 	// gl_Position is used for clipping.
+
+	gl_Position = proj*view*model*vec4(my_vertex_position, 1.0);
 
 	uv0 = vertex_uv0;
 }
