@@ -21,5 +21,5 @@ public:
 	void Draw();
 
 private:
-	bool demo = true;
+	bool demo = false;
 };

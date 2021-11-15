@@ -25,9 +25,9 @@ bool ModuleGUI::Init()
 
 	ImGui::CreateContext();
 
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	//ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -38,23 +38,24 @@ bool ModuleGUI::Init()
 void ModuleGUI::Draw()
 {
 	// Menu
-	if (ImGui::BeginMenu("Help"))
+	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File")) {
-			ImGui::MenuItem("New");
-			ImGui::MenuItem("Open");
-			ImGui::MenuItem("Save");
+			if (ImGui::MenuItem("New")) {}
+			if (ImGui::MenuItem("Open")) {}
+			if (ImGui::MenuItem("Save")) {}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Edit")) {
-			ImGui::MenuItem("Cut");
-			ImGui::MenuItem("Copy");
-			ImGui::MenuItem("Paste");
-			ImGui::MenuItem("Delete");
+			if (ImGui::MenuItem("Cut")) {}
+			if (ImGui::MenuItem("Copy")) {}
+			if (ImGui::MenuItem("Paste")) {}
+			if (ImGui::MenuItem("Delete")) {}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
+
 	// End Menu
 	
 	/*
@@ -96,15 +97,16 @@ update_status ModuleGUI::PreUpdate()
 update_status ModuleGUI::Update()
 {
 	Draw();
+
+	// Rendering
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleGUI::PostUpdate()
 {
-	// Rendering
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 	return UPDATE_CONTINUE;
 }
 
