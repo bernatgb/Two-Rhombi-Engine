@@ -14,6 +14,8 @@ public:
 
 	unsigned CreateTriangleVBO();
 	unsigned CreateSquareVBO();
+	void RenderTriangleVBO(unsigned vbo, unsigned program);
+	void RenderSquareVBO(unsigned vbo, unsigned program);
 
 private:
 	unsigned triangleVBO;
