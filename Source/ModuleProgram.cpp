@@ -63,7 +63,7 @@ unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
 	return shader_id;
 }
 
-unsigned  ModuleProgram::CreateProgram(unsigned vertex_s, unsigned fragment_s)
+unsigned ModuleProgram::CreateProgram(unsigned vertex_s, unsigned fragment_s)
 {
 	unsigned program = glCreateProgram();
 	glAttachShader(program, vertex_s);
@@ -90,34 +90,4 @@ unsigned  ModuleProgram::CreateProgram(unsigned vertex_s, unsigned fragment_s)
 	glDeleteShader(fragment_s);
 
 	return program;
-}
-
-void ModuleProgram::RenderTriangleVBO(unsigned vbo, unsigned program)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-
-	// size = 3 float per vertex
-	// stride = 0 is equivalent to stride = sizeof(float)*3
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glUseProgram(program);
-
-	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-void ModuleProgram::RenderSquareVBO(unsigned vbo, unsigned program)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-
-	// size = 3 float per vertex
-	// stride = 0 is equivalent to stride = sizeof(float)*3
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glUseProgram(program);
-
-	// 2 triangle to draw = 4 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 4);
 }

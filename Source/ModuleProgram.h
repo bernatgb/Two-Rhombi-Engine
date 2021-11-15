@@ -14,8 +14,6 @@ public:
 	char* LoadShaderSource(const char* shader_file_name);
 	unsigned CompileShader(unsigned type, const char* source);
 	unsigned CreateProgram(unsigned vertex_s, unsigned fragment_s);
-	void RenderTriangleVBO(unsigned vbo, unsigned program);
-	void RenderSquareVBO(unsigned vbo, unsigned program);
 
 private:
 
