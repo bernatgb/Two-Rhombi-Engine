@@ -2,10 +2,14 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "ModuleExercise.h"
+#include "ModuleDebugDraw.h"
+#include "./debug_draw/debugdraw.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "MathGeoLib.h"
 
 ModuleRender::ModuleRender()
 {
@@ -50,6 +54,37 @@ bool ModuleRender::Init()
 	//glCullFace(GL_BACK); // By default, back-facing facets are candidates for culling
 	//glFrontFace(GL_CCW); // By default, specifies that the orientation of front-facing polygons are counterclockwise 
 
+	/*
+	Frustum frustum;
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetViewPlaneDistances(0.1f, 200.0f);
+	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.3f);
+	frustum.SetPos(float3(0.0f, 1.0f, -2.0f));
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
+	float4x4 projectionGL = frustum.ProjectionMatrix().Transposed(); //<-- Important to transpose!
+	//Send the frustum projection matrix to OpenGL
+	// direct mode would be:
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(*projectionGL.v);
+
+	frustum.SetPos(float3(1.0f, 4.0f, 2.0f));
+	//float3x3 rotationMatrix = float3x3::FromEulerXYZ(DegToRad(0.0f), DegToRad(0.0f), DegToRad(-75.0f)); // = some rotation value (or LookAt matrix)
+	//frustum.SetFront(rotationMatrix.WorldX());
+	//frustum.SetUp(rotationMatrix.WorldY());
+	//Send the frustum view matrix to OpenGL
+	// direct mode would be:
+	float4x4 viewGL = float4x4(frustum.ViewMatrix()).Transposed();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(*viewGL.v);
+
+	float3x3 rotationDeltaMatrix; // = some rotation delta value
+	vec oldFront = frustum.Front().Normalized();
+	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
+	vec oldUp = frustum.Up().Normalized();
+	frustum.SetUp(rotationDeltaMatrix.MulDir(oldUp));
+	*/
+
 	return true;
 }
 
@@ -75,6 +110,16 @@ update_status ModuleRender::Update()
 
 update_status ModuleRender::PostUpdate()
 {
+	// Rendering grid
+	float4x4 view, proj;
+	view = App->exercise->view;
+	proj = App->exercise->projection;
+	
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+	
+	App->debugDraw->Draw(view, proj, w, h);
+
 	// Rendering
 	SDL_GL_SwapWindow(App->window->window);
 
@@ -96,5 +141,6 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
+	//glViewport(0, 0, width, height);
 }
 
