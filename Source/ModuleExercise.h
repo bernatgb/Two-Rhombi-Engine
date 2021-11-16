@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "MathGeoLib.h"
 
 class ModuleExercise : public Module
 {
@@ -16,6 +17,8 @@ public:
 	unsigned CreateSquareVBO();
 	void RenderTriangleVBO(unsigned vbo, unsigned program);
 	void RenderSquareVBO(unsigned vbo, unsigned program);
+
+	float4x4 model, view, projection;
 
 private:
 	unsigned triangleVBO;

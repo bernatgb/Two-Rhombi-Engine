@@ -23,26 +23,41 @@ bool ModuleExercise::Init()
 	triangleVBO = CreateTriangleVBO();
 
 	// creates a program with Hello World vertex and fragment shaders
-	const char* vertexShaderLoaded = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
-	const char* fragmentShaderLoaded = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
+	const char* vertexShaderLoadedT = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
+	const char* fragmentShaderLoadedT = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
 
-	unsigned vertexShaderID = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoaded);
+	unsigned vertexShaderIDt = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoadedT);
 	
-	unsigned fragmentShaderID = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoaded);
+	unsigned fragmentShaderIDt = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoadedT);
 
-	triangleProgram = App->program->CreateProgram(vertexShaderID, fragmentShaderID);
+	triangleProgram = App->program->CreateProgram(vertexShaderIDt, fragmentShaderIDt);
 
 	// SQUARE
 	squareVBO = CreateSquareVBO();
 	
 	// creates a program with Hello World vertex and fragment shaders
-	//const char* vertexShaderLoaded = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
-	//const char* fragmentShaderLoaded = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
+	const char* vertexShaderLoadedS = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
+	const char* fragmentShaderLoadedS = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
 	
-	//unsigned vertexShaderID = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoaded);
-	//unsigned fragmentShaderID = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoaded);
+	unsigned vertexShaderIDs = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoadedS);
+	unsigned fragmentShaderIDs = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoadedS);
 
-	squareProgram = App->program->CreateProgram(vertexShaderID, fragmentShaderID);
+	squareProgram = App->program->CreateProgram(vertexShaderIDs, fragmentShaderIDs);
+
+	// MATRICES
+	Frustum frustum;
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetViewPlaneDistances(0.1f, 200.0f);
+	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.3f);
+	frustum.SetPos(float3(0.0f, 1.0f, -3.0f));
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
+
+	model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f),
+		float4x4::RotateY(pi),
+		float3(2.0f, 1.0f, 0.0f));
+	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
 	
 	return true;
 }
@@ -98,21 +113,18 @@ unsigned ModuleExercise::CreateSquareVBO()
 
 void ModuleExercise::RenderTriangleVBO(unsigned vbo, unsigned program)
 {
+	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 
 	// size = 3 float per vertex
 	// stride = 0 is equivalent to stride = sizeof(float)*3
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glUseProgram(program);
-
-	float4x4 model, view, projection;
-	// TODO: retrieve model view and projection
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
-	// TODO: bind buffer and vertex attributes
 
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
