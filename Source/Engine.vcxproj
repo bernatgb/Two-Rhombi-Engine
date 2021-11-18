@@ -194,6 +194,7 @@
     <ClCompile Include="MathGeoLib_Source\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib_Source\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib_Source\Time\Clock.cpp" />
+    <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleExercise.cpp" />
     <ClCompile Include="ModuleGUI.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
@@ -204,6 +205,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="debug_draw\debugdraw.h" />
+    <ClInclude Include="debug_draw\debug_draw.hpp" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -291,6 +294,7 @@
     <ClInclude Include="MathGeoLib_Source\Math\vec2d.h" />
     <ClInclude Include="MathGeoLib_Source\Time\Clock.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleExercise.h" />
     <ClInclude Include="ModuleGUI.h" />
     <ClInclude Include="ModuleInput.h" />
@@ -322,6 +326,9 @@
     <Library Include="DevIL\lib\ILUT.lib" />
     <Library Include="glew-2.1.0\lib\Release\x64\glew32.lib" />
     <Library Include="glew-2.1.0\lib\Release\x64\glew32s.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Lenna.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
