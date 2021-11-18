@@ -6,7 +6,7 @@
 
 class ModuleRender;
 class ModuleWindow;
-class ModuleTextures;
+class ModuleTexture;
 class ModuleInput;
 class ModuleExercise;
 class ModuleProgram;
@@ -32,6 +32,7 @@ public:
 	ModuleProgram* program = nullptr;
 	ModuleGUI* gui = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleTexture* texture = nullptr;
 
 private:
 
