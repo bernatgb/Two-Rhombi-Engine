@@ -18,7 +18,7 @@ public:
 	void DoubleSpeed(bool shiftPressed);
 	void TripleSpeed(bool shiftPressed);
 	void LookAt(float3 position);
-	void WindowResized(float horizontalFov, float aspectRatio);
+	void WindowResized(float aspectRatio, bool horizontal);
 
 	float4x4 model, view, projection;
 	

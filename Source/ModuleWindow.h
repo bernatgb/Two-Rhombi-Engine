@@ -32,6 +32,8 @@ public:
 	SDL_Surface* screen_surface = NULL;
 
 	double aspectRatio = 0;
+	int previousWidth = SCREEN_WIDTH;
+	int previousHeight = SCREEN_HEIGHT;
 };
 
 #endif // __ModuleWindow_H__

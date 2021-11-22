@@ -66,9 +66,17 @@ update_status ModuleWindow::PreUpdate()
 	if (newAspectRatio != aspectRatio)
 	{
 		App->renderer->WindowResized(screen_surface->w, screen_surface->h);
+		if (screen_surface->w != previousWidth)
+		{
+			App->camera->WindowResized(newAspectRatio, true);
+			previousWidth = screen_surface->w;
+		}
+		if (screen_surface->h != previousHeight)
+		{
+			App->camera->WindowResized(newAspectRatio, false);
+			previousHeight = screen_surface->h;
+		}
 
-		float horizontalFov = 2 * math::Atan(math::Tan(screen_surface->h * newAspectRatio));
-		App->camera->WindowResized(horizontalFov, newAspectRatio);
 
 		aspectRatio = newAspectRatio;
 	}

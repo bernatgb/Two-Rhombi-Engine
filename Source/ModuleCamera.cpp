@@ -110,6 +110,7 @@ void ModuleCamera::RotateCamera(char rotation)
 	}
 
 	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
 }
 
 void ModuleCamera::DoubleSpeed(bool shiftPressed)
@@ -126,14 +127,20 @@ void ModuleCamera::TripleSpeed(bool shiftPressed)
 
 void ModuleCamera::LookAt(float3 position)
 {
-	float3 targetDirection = position - frustum.Pos();
-	float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection.Normalized(), frustum.Up(), float3::unitY);
+	//float3 targetDirection = position - frustum.Pos();
+	//float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection.Normalized(), frustum.Up(), float3::unitY);
+	float3 targetDirection = frustum.Pos() - position.Normalized();
+	float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection, frustum.Up(), float3::unitY);
 	frustum.SetFront(toLookAt.MulDir(frustum.Front().Normalized()));
 	frustum.SetUp(toLookAt.MulDir(frustum.Up().Normalized()));
 }
 
-void ModuleCamera::WindowResized(float horizontalFov, float aspectRatio)
+void ModuleCamera::WindowResized(float aspectRatio, bool horizontal)
 {
-	frustum.SetHorizontalFovAndAspectRatio(horizontalFov, aspectRatio);
-	view = float4x4(frustum.ViewMatrix());
+	if (horizontal)
+		frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspectRatio);
+	else
+		frustum.SetVerticalFovAndAspectRatio(frustum.VerticalFov(), aspectRatio);
+
+	projection = frustum.ProjectionMatrix();
 }
