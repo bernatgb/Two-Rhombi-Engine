@@ -193,6 +193,7 @@
     <ClCompile Include="MathGeoLib_Source\Math\Quat.cpp" />
     <ClCompile Include="MathGeoLib_Source\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib_Source\Math\TransformOps.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="MathGeoLib_Source\Time\Clock.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleExercise.cpp" />
@@ -292,6 +293,7 @@
     <ClInclude Include="MathGeoLib_Source\Math\Swap.h" />
     <ClInclude Include="MathGeoLib_Source\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib_Source\Math\vec2d.h" />
+    <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="MathGeoLib_Source\Time\Clock.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
