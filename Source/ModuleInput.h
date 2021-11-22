@@ -22,5 +22,6 @@ private:
 	bool lshiftWasPressed = false;
 	bool mouseLButtonDown = false;
 	Sint32 x = 0;
-	bool xUpdated = false;
+	Sint32 y = 0;
+	bool xyUpdated = false;
 };

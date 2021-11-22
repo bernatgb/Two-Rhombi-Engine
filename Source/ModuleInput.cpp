@@ -55,17 +55,35 @@ update_status ModuleInput::Update()
 				}
 				break;
 			case SDL_MOUSEMOTION:
-				if (mouseLButtonDown && xUpdated)
+				if (mouseLButtonDown && xyUpdated)
 				{
-					if (x > sdlEvent.button.x)
+					float xDiff = math::Abs(x - sdlEvent.button.x);
+					float yDiff = math::Abs(y - sdlEvent.button.y);
+					if (xDiff >= yDiff)
 					{
-						App->camera->RotateCamera('r');
-						x = sdlEvent.button.x;
+						if (x > sdlEvent.button.x)
+						{
+							App->camera->RotateCamera('r');
+							x = sdlEvent.button.x;
+						}
+						else if (x < sdlEvent.button.x)
+						{
+							App->camera->RotateCamera('l');
+							x = sdlEvent.button.x;
+						}
 					}
-					else if (x < sdlEvent.button.x)
+					else // xDiff < yDiff
 					{
-						App->camera->RotateCamera('l');
-						x = sdlEvent.button.x;
+						if (y > sdlEvent.button.y)
+						{
+							App->camera->RotateCamera('d');
+							y = sdlEvent.button.y;
+						}
+						else if (y < sdlEvent.button.y)
+						{
+							App->camera->RotateCamera('u');
+							y = sdlEvent.button.y;
+						}
 					}
 				}
 				break;
@@ -155,13 +173,14 @@ update_status ModuleInput::Update()
 	if (mouseLButtonDown && sdlEvent.type == SDL_MOUSEBUTTONUP)
 	{
 		mouseLButtonDown = false;
-		xUpdated = false;
+		xyUpdated = false;
 	}
 	if (!mouseLButtonDown && sdlEvent.type == SDL_MOUSEBUTTONDOWN)
 	{
 		mouseLButtonDown = true;
 		x = sdlEvent.button.x;
-		xUpdated = true;
+		y = sdlEvent.button.y;
+		xyUpdated = true;
 	}
 
     return UPDATE_CONTINUE;
