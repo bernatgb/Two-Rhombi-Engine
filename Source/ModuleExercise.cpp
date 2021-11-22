@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleExercise.h"
+#include "ModuleCamera.h"
 #include "ModuleTexture.h"
 #include "ModuleProgram.h"
 #include "ModuleWindow.h"
@@ -45,21 +46,6 @@ bool ModuleExercise::Init()
 
 	squareProgram = App->program->CreateProgram(vertexShaderIDs, fragmentShaderIDs);
 
-	// MATRICES
-	Frustum frustum;
-	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	frustum.SetViewPlaneDistances(0.1f, 200.0f);
-	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.3f);
-	frustum.SetPos(float3(0.0f, 1.0f, -3.0f));
-	frustum.SetFront(float3::unitZ);
-	frustum.SetUp(float3::unitY);
-
-	model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f),
-		float4x4::RotateX(pi),
-		float3(2.0f, 2.0f, 0.0f));
-	view = float4x4(frustum.ViewMatrix());
-	projection = frustum.ProjectionMatrix();
-	
 	return true;
 }
 
@@ -143,9 +129,9 @@ void ModuleExercise::RenderTriangleVBO(unsigned vbo, unsigned program)
 {
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -169,9 +155,9 @@ void ModuleExercise::RenderSquareVBO(unsigned vbo, unsigned program)
 {
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
