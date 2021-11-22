@@ -15,8 +15,11 @@ public:
 	// Destructor
 	virtual ~ModuleWindow();
 
-	// Called before quitting
+	// Called before render is available
 	bool Init();
+
+	// Called before updating
+	update_status PreUpdate();
 
 	// Called before quitting
 	bool CleanUp();
@@ -27,6 +30,8 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
+
+	double aspectRatio = 0;
 };
 
 #endif // __ModuleWindow_H__

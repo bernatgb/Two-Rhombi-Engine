@@ -1,6 +1,8 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleRender.h"
+#include "ModuleCamera.h"
 
 ModuleWindow::ModuleWindow()
 {
@@ -27,11 +29,16 @@ bool ModuleWindow::Init()
 		//Create window
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
+		aspectRatio = (double)width / (double)height;
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
 
 		if(FULLSCREEN == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
+		}
+		if (RESIZABLE == true)
+		{
+			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
@@ -50,6 +57,24 @@ bool ModuleWindow::Init()
 	}
 
 	return ret;
+}
+
+update_status ModuleWindow::PreUpdate()
+{
+	screen_surface = SDL_GetWindowSurface(window);
+	double newAspectRatio = (double)screen_surface->w / (double)screen_surface->h;
+	if (newAspectRatio != aspectRatio)
+	{
+		App->renderer->WindowResized(screen_surface->w, screen_surface->h);
+
+		float horizontalFov = 2 * math::Atan(math::Tan(screen_surface->h * newAspectRatio));
+		App->camera->WindowResized(horizontalFov, newAspectRatio);
+
+		aspectRatio = newAspectRatio;
+	}
+		
+
+	return UPDATE_CONTINUE;
 }
 
 // Called before quitting

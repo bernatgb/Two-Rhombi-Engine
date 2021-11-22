@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "ModuleCamera.h"
 #include "ModuleExercise.h"
 #include "ModuleDebugDraw.h"
 #include "./debug_draw/debugdraw.h"
@@ -112,8 +113,8 @@ update_status ModuleRender::PostUpdate()
 {
 	// Rendering grid
 	float4x4 view, proj;
-	view = App->exercise->view;
-	proj = App->exercise->projection;
+	view = App->camera->view;
+	proj = App->camera->projection;
 	
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
@@ -141,6 +142,6 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
-	//glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 }
 
