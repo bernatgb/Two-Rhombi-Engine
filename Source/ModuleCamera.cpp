@@ -21,9 +21,7 @@ bool ModuleCamera::Init()
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
-	model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f),
-		float4x4::RotateX(pi),
-		float3(2.0f, 2.0f, 0.0f));
+	model = float4x4::identity;  //float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f), float4x4::RotateX(0), float3(1.0f, 1.0f, 1.0f));
 	view = float4x4(frustum.ViewMatrix());
 	projection = frustum.ProjectionMatrix();
 

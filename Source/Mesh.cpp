@@ -48,7 +48,7 @@ void Mesh::LoadEBO(const aiMesh* mesh)
 	unsigned index_size = sizeof(unsigned) * mesh->mNumFaces * 3;
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size, nullptr, GL_STATIC_DRAW);
 
-	unsigned* indices = (unsigned*)(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_MAP_WRITE_BIT));
+	unsigned* indices = (unsigned*)(glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_size, GL_MAP_WRITE_BIT));
 	// returns a pointer to VBO data so you can write/read from it.
 	
 	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
@@ -83,7 +83,6 @@ void Mesh::CreateVAO()
 
 void Mesh::Draw(const std::vector<unsigned>& model_textures)
 {
-	unsigned program = App->renderer->default_program;
 	const float4x4& view = App->camera->view;
 	const float4x4& proj = App->camera->projection;
 	float4x4 model = float4x4::identity;
@@ -92,6 +91,7 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures)
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&view);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&proj);
 	glActiveTexture(GL_TEXTURE0);
+	material_index = 0;
 	glBindTexture(GL_TEXTURE_2D, model_textures[material_index]);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	glBindVertexArray(vao);

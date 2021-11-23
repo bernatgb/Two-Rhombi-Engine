@@ -17,10 +17,12 @@ public:
 	unsigned CreateSquareVBO();
 	void RenderTriangleVBO(unsigned vbo, unsigned program);
 	void RenderSquareVBO(unsigned vbo, unsigned program);
+	void RenderBakerhouse(unsigned program);
 
 private:
 	unsigned triangleVBO;
 	unsigned triangleProgram;
 	unsigned squareVBO;
 	unsigned squareProgram;
+	unsigned bakerhouseProgram;
 };

@@ -14,6 +14,7 @@ public:
 
 	unsigned LoadImage(const char* image);
 	void LoadTexture(unsigned program);
+	unsigned LoadTextureFromImage(unsigned image, unsigned program);
 
 private:
 	unsigned imageID;

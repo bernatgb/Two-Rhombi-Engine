@@ -5,6 +5,7 @@
 #include "ModuleTexture.h"
 #include "ModuleProgram.h"
 #include "ModuleWindow.h"
+#include "Model.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include "MathGeoLib.h"
@@ -46,6 +47,15 @@ bool ModuleExercise::Init()
 
 	squareProgram = App->program->CreateProgram(vertexShaderIDs, fragmentShaderIDs);
 
+	// BAKERHOUSE
+	const char* vertexShaderLoadedB = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
+	const char* fragmentShaderLoadedB = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
+
+	unsigned vertexShaderIDb = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoadedB);
+	unsigned fragmentShaderIDb = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoadedB);
+
+	bakerhouseProgram = App->program->CreateProgram(vertexShaderIDb, fragmentShaderIDb);
+
 	return true;
 }
 
@@ -54,8 +64,11 @@ update_status ModuleExercise::Update()
 	// renders VBO triangle using Hello World program
 	//RenderTriangleVBO(triangleVBO, triangleProgram);
 
-	// reders VBO square using Hello World program
+	// renders VBO square using Hello World program
 	RenderSquareVBO(squareVBO, squareProgram);
+
+	// renders a bakerhouse
+	RenderBakerhouse(bakerhouseProgram);
 
 	return UPDATE_CONTINUE;
 }
@@ -175,4 +188,10 @@ void ModuleExercise::RenderSquareVBO(unsigned vbo, unsigned program)
 
 	// 2 triangle to draw = 4 vertices
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void ModuleExercise::RenderBakerhouse(unsigned program)
+{
+	Model model;
+	model.Load("..\\Source\\baker_house_model\\Baker_house.png", "..\\Source\\baker_house_model\\BakerHouse.fbx", program);
 }

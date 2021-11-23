@@ -66,3 +66,20 @@ void ModuleTexture::LoadTexture(unsigned program)
 
 	ilDeleteImages(1, &imageID);
 }
+
+unsigned ModuleTexture::LoadTextureFromImage(unsigned image, unsigned program)
+{
+	glGenTextures(1, &image);
+	glBindTexture(GL_TEXTURE_2D, image);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
+	 interpolation for magnification filter */
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
+	  interpolation for minifying filter */
+
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
+		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
+		ilGetData());
+
+	return image;
+}
