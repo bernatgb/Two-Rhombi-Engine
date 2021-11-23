@@ -11,7 +11,8 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
-	void LoadImage(const char* image);
+
+	unsigned LoadImage(const char* image);
 	void LoadTexture(unsigned program);
 
 private:

@@ -32,12 +32,13 @@ bool ModuleTexture::CleanUp()
 	return true;
 }
 
-void ModuleTexture::LoadImage(const char* image)
+unsigned ModuleTexture::LoadImage(const char* image)
 {
 	// Load image data with DevIL into CPU
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 	ilLoadImage(image);
+	return imageID;
 }
 
 void ModuleTexture::LoadTexture(unsigned program)
@@ -56,7 +57,7 @@ void ModuleTexture::LoadTexture(unsigned program)
 		ilGetData());
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glGenerateTextureMipmap(imageID);
+	//glGenerateTextureMipmap(imageID);
 
 	// Add texture coordinates (UVs) into VBO
 	glActiveTexture(GL_TEXTURE0);
