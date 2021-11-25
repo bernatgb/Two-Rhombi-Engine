@@ -1,10 +1,19 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "SDL.h"
+#include <vector>
 
-struct SDL_Texture;
-struct SDL_Renderer;
-struct SDL_Rect;
+struct HardwareInfo
+{
+	SDL_version sdl_version;
+	int n_cpu;
+	float ram_gb;
+	unsigned char* gpu;
+	unsigned char* gpu_brand;
+	int vram_budget;
+	int vram_free;
+};
 
 class ModuleGUI : public Module
 {
@@ -18,8 +27,11 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	void Draw();
+	update_status Draw();
 
 private:
 	bool demo = false;
+	HardwareInfo hardware;
+	std::vector<float> fps_log;
+	std::vector<float> ms_log;
 };
