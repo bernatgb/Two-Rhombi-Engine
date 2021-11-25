@@ -30,7 +30,7 @@ bool ModuleWindow::Init()
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
 		aspectRatio = (double)width / (double)height;
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
+		flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
 
 		if(FULLSCREEN == true)
 		{
@@ -66,6 +66,7 @@ update_status ModuleWindow::PreUpdate()
 	if (newAspectRatio != aspectRatio)
 	{
 		App->renderer->WindowResized(screen_surface->w, screen_surface->h);
+		
 		if (screen_surface->w != previousWidth)
 		{
 			App->camera->WindowResized(newAspectRatio, true);
@@ -76,7 +77,6 @@ update_status ModuleWindow::PreUpdate()
 			App->camera->WindowResized(newAspectRatio, false);
 			previousHeight = screen_surface->h;
 		}
-
 
 		aspectRatio = newAspectRatio;
 	}
@@ -101,3 +101,21 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+void ModuleWindow::SetFullscreen(bool fullscreen)
+{
+	if (fullscreen)
+	{
+		flags |= SDL_WINDOW_FULLSCREEN;
+		SDL_SetWindowFullscreen(window, flags);
+	}
+	else
+	{
+		flags -= SDL_WINDOW_FULLSCREEN;
+		SDL_SetWindowFullscreen(window, flags);
+	}
+}
+
+void ModuleWindow::SetResizable(bool resizable)
+{
+	SDL_SetWindowResizable(window, (SDL_bool)resizable);
+}
