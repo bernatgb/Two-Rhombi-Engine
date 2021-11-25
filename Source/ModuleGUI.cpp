@@ -3,6 +3,7 @@
 #include "ModuleGUI.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "Timer.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include "imgui.h"
@@ -44,6 +45,8 @@ bool ModuleGUI::Init()
 	glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &hardware.vram_budget);
 	glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &hardware.vram_free);
 
+	timer.Start();
+
 	return true;
 }
 
@@ -63,7 +66,7 @@ update_status ModuleGUI::PreUpdate()
 // Called every draw update
 update_status ModuleGUI::Update()
 {
-	update_status draw =	Draw();
+	update_status draw = Draw();
 
 	// Rendering
 	ImGui::Render();
@@ -116,6 +119,10 @@ update_status ModuleGUI::Draw()
 	// Configuration
 	if (ImGui::CollapsingHeader("Application"))
 	{
+		fps_log.erase(fps_log.begin());
+		fps_log.push_back(timer.FrameInfo());
+		ms_log.erase(ms_log.begin());
+		ms_log.push_back(timer.ReadMS());
 		// FPS graph
 		char title[25];
 		sprintf_s(title, 25, "Framerate % .1f", fps_log[fps_log.size() - 1]);
@@ -127,18 +134,19 @@ update_status ModuleGUI::Draw()
 
 	if (ImGui::CollapsingHeader("Window"))
 	{
-		/*
 		// Window options
-		if (ImGui::Checkbox("Fullscreen", &fullsceen))
-			App->window->SetFullSreen(fullscreen);
+		if (ImGui::Checkbox("Fullscreen", &fullscreen))
+			App->window->SetFullscreen(fullscreen);
 
 		ImGui::SameLine();
-		if (ImGui::Checkbox("Resizable, &resizable"))
+
+		if (ImGui::Checkbox("Resizable", &resizable))
 			App->window->SetResizable(resizable);
+		/*
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Restart to apply");
-		// End Window options
 		*/
+		// End Window options
 	}
 
 	if (ImGui::CollapsingHeader("Hardware"))

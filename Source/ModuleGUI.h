@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "Timer.h"
 #include "SDL.h"
 #include <vector>
 
@@ -34,4 +35,9 @@ private:
 	HardwareInfo hardware;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
+	bool fullscreen = false;
+	bool resizable = true;
+	int index = 0;
+	bool complete = false;
+	Timer timer;
 };
