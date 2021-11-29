@@ -55,7 +55,7 @@ update_status ModuleInput::Update()
 				}
 				break;
 			case SDL_MOUSEMOTION:
-				if (mouseLButtonDown && xyUpdated)
+				if (mouseRButtonDown && xyUpdated)
 				{
 					float xDiff = math::Abs(x - sdlEvent.button.x);
 					float yDiff = math::Abs(y - sdlEvent.button.y);
@@ -87,6 +87,7 @@ update_status ModuleInput::Update()
 					}
 				}
 				break;
+
         }
     }
 
@@ -146,6 +147,12 @@ update_status ModuleInput::Update()
 		App->camera->RotateCamera('r');
 	}
 
+	// Focus the camera around the geometry
+	else if (keyboard[SDL_SCANCODE_F]) {
+		LOG("<F> is pressed.");
+		App->camera->LookAt(float3(0.0f, 0.0f, 0.0f));
+	}
+
 	// Have the camera speed double/triple if SHIFT is being pressed
 	while (keyboard[SDL_SCANCODE_LSHIFT]) {
 		LOG("<LSHIFT> is pressed.");
@@ -170,18 +177,19 @@ update_status ModuleInput::Update()
 	}
 	
 	// Mouse rotation	
-	if (mouseLButtonDown && sdlEvent.type == SDL_MOUSEBUTTONUP)
+	if (mouseRButtonDown && sdlEvent.type == SDL_MOUSEBUTTONUP && sdlEvent.button.button == SDL_BUTTON_RIGHT)
 	{
-		mouseLButtonDown = false;
+		mouseRButtonDown = false;
 		xyUpdated = false;
 	}
-	if (!mouseLButtonDown && sdlEvent.type == SDL_MOUSEBUTTONDOWN)
+	if (!mouseRButtonDown && sdlEvent.type == SDL_MOUSEBUTTONDOWN && sdlEvent.button.button == SDL_BUTTON_RIGHT)
 	{
-		mouseLButtonDown = true;
+		mouseRButtonDown = true;
 		x = sdlEvent.button.x;
 		y = sdlEvent.button.y;
 		xyUpdated = true;
 	}
+
 
     return UPDATE_CONTINUE;
 }

@@ -20,7 +20,7 @@ private:
 	const Uint8 *keyboard = NULL;
 	bool rshiftWasPressed = false;
 	bool lshiftWasPressed = false;
-	bool mouseLButtonDown = false;
+	bool mouseRButtonDown = false;
 	Sint32 x = 0;
 	Sint32 y = 0;
 	bool xyUpdated = false;

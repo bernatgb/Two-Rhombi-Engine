@@ -19,15 +19,47 @@ ModuleGUI::~ModuleGUI()
 {
 }
 
+static void ShowExampleAppLog(bool* p_open, ExampleAppLog log)
+{
+	// For the demo: add a debug button _BEFORE_ the normal log window contents
+	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
+	// Most of the contents of the window will be added by the log.Draw() call.
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Example: Log", p_open);
+	if (ImGui::SmallButton("[Debug] Add 5 entries"))
+	{
+		static int counter = 0;
+		const char* categories[3] = { "info", "warn", "error" };
+		const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
+		for (int n = 0; n < 5; n++)
+		{
+			const char* category = categories[counter % IM_ARRAYSIZE(categories)];
+			const char* word = words[counter % IM_ARRAYSIZE(words)];
+			//log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
+				//ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
+			counter++;
+		}
+	}
+	ImGui::End();
+
+	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
+	log.Draw("Example: Log", p_open);
+}
+
+void ModuleGUI::printLog(static char string[4096])
+{
+	log.AddLog(string);
+}
+
 // Called before GUI is available
 bool ModuleGUI::Init()
 {
-	LOG("Creating GUI context");
+	//LOG("Creating GUI context");
 
 	ImGui::CreateContext();
 
-	//ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
@@ -60,6 +92,9 @@ update_status ModuleGUI::PreUpdate()
 	if (demo)
 		ImGui::ShowDemoWindow(&demo);
 
+	if (show_app_log)
+	ShowExampleAppLog(&show_app_log, log);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -83,7 +118,7 @@ update_status ModuleGUI::PostUpdate()
 // Called before quitting
 bool ModuleGUI::CleanUp()
 {
-	LOG("Destroying GUI");
+	//LOG("Destroying GUI");
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -117,73 +152,76 @@ update_status ModuleGUI::Draw()
 	// End Menu
 
 	// Configuration
-	if (ImGui::CollapsingHeader("Application"))
+	if (ImGui::Begin("Configuration"))
 	{
-		fps_log.erase(fps_log.begin());
-		fps_log.push_back(timer.FrameInfo());
-		ms_log.erase(ms_log.begin());
-		ms_log.push_back(timer.ReadMS());
-		// FPS graph
-		char title[25];
-		sprintf_s(title, 25, "Framerate % .1f", fps_log[fps_log.size() - 1]);
-		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-		sprintf_s(title, 25, "Milliseconds % .1f", ms_log[ms_log.size() - 1]);
-		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
-		// End FPS graph
+		if (ImGui::CollapsingHeader("Application"))
+		{
+			fps_log.erase(fps_log.begin());
+			fps_log.push_back(timer.FrameInfo());
+			ms_log.erase(ms_log.begin());
+			ms_log.push_back(timer.ReadMS());
+			// FPS graph
+			char title[25];
+			sprintf_s(title, 25, "Framerate % .1f", fps_log[fps_log.size() - 1]);
+			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+			sprintf_s(title, 25, "Milliseconds % .1f", ms_log[ms_log.size() - 1]);
+			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+			// End FPS graph
+		}
+
+		if (ImGui::CollapsingHeader("Window"))
+		{
+			// Window options
+			if (ImGui::Checkbox("Fullscreen", &fullscreen))
+				App->window->SetFullscreen(fullscreen);
+
+			ImGui::SameLine();
+
+			if (ImGui::Checkbox("Resizable", &resizable))
+				App->window->SetResizable(resizable);
+			/*
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Restart to apply");
+			*/
+			// End Window options
+		}
+
+		if (ImGui::CollapsingHeader("Hardware"))
+		{
+			static SDL_version version;
+			static const float vram_budget_mb = hardware.vram_budget / 1024.0f;
+			glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &hardware.vram_free);
+			float vram_free_mb = hardware.vram_free / 1024.0f;
+			float vram_usage_mb = vram_budget_mb - vram_free_mb;
+
+			ImGui::Text("SDL Version: %d.%d.%d", hardware.sdl_version.major,
+				hardware.sdl_version.minor, hardware.sdl_version.patch);
+			ImGui::Separator();
+			ImGui::Text("CPUs: %d", hardware.n_cpu);
+			ImGui::Text("System RAM: %.1f Gb", hardware.ram_gb);
+			ImGui::Separator();
+			ImGui::Text("GPU: %s", hardware.gpu);
+			ImGui::Text("Brand: %s", hardware.gpu_brand);
+			ImGui::Text("VRAM Budget: %.1f Mb", vram_budget_mb);
+			ImGui::Text("Vram Usage:  %.1f Mb", vram_usage_mb);
+			ImGui::Text("Vram Avaliable:  %.1f Mb", vram_free_mb);
+		}
+
+		if (ImGui::CollapsingHeader("About"))
+		{
+			ImGui::Text("Engine name: Two Rhombi Engine");
+			ImGui::Text("Description: Engine made in UPC Master");
+			ImGui::Text("Author: Bernat Güell");
+			ImGui::Separator();
+			ImGui::Text("Libraries:");
+			ImGui::Text("	*DevIL");
+			ImGui::Text("	*GLEW");
+			ImGui::Text("	*ImGui");
+			ImGui::Text("	*MathGeoLib");
+			ImGui::Text("	*SDL");
+		}
+		ImGui::End();
 	}
-
-	if (ImGui::CollapsingHeader("Window"))
-	{
-		// Window options
-		if (ImGui::Checkbox("Fullscreen", &fullscreen))
-			App->window->SetFullscreen(fullscreen);
-
-		ImGui::SameLine();
-
-		if (ImGui::Checkbox("Resizable", &resizable))
-			App->window->SetResizable(resizable);
-		/*
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Restart to apply");
-		*/
-		// End Window options
-	}
-
-	if (ImGui::CollapsingHeader("Hardware"))
-	{
-		static SDL_version version;
-		static const float vram_budget_mb = hardware.vram_budget / 1024.0f;
-		glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &hardware.vram_free);
-		float vram_free_mb = hardware.vram_free / 1024.0f;
-		float vram_usage_mb = vram_budget_mb - vram_free_mb;
-
-		ImGui::Text("SDL Version: %d.%d.%d", hardware.sdl_version.major,
-			hardware.sdl_version.minor, hardware.sdl_version.patch);
-		ImGui::Separator();
-		ImGui::Text("CPUs: %d", hardware.n_cpu);
-		ImGui::Text("System RAM: %.1f Gb", hardware.ram_gb);
-		ImGui::Separator();
-		ImGui::Text("GPU: %s", hardware.gpu);
-		ImGui::Text("Brand: %s", hardware.gpu_brand);
-		ImGui::Text("VRAM Budget: %.1f Mb", vram_budget_mb);
-		ImGui::Text("Vram Usage:  %.1f Mb", vram_usage_mb);
-		ImGui::Text("Vram Avaliable:  %.1f Mb", vram_free_mb);
-	}
-
-	if (ImGui::CollapsingHeader("About"))
-	{
-		ImGui::Text("Engine name: Two Rhombi Engine");
-		ImGui::Text("Description: Engine made in UPC Master");
-		ImGui::Text("Author: Bernat Güell");
-		ImGui::Separator();
-		ImGui::Text("Libraries:");
-		ImGui::Text("	*DevIL");
-		ImGui::Text("	*GLEW");
-		ImGui::Text("	*ImGui");
-		ImGui::Text("	*MathGeoLib");
-		ImGui::Text("	*SDL");
-	}
-
 	// End Configuration
 
 	if (quit)
