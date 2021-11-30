@@ -17,9 +17,12 @@ enum main_states
 };
 
 Application* App = NULL;
+Console* console = NULL;
 
 int main(int argc, char ** argv)
 {
+	console = new Console();
+
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 

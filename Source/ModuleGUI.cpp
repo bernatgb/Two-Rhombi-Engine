@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "Timer.h"
+#include "Console.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include "imgui.h"
@@ -19,48 +20,15 @@ ModuleGUI::~ModuleGUI()
 {
 }
 
-static void ShowExampleAppLog(bool* p_open, ExampleAppLog log)
-{
-	// For the demo: add a debug button _BEFORE_ the normal log window contents
-	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
-	// Most of the contents of the window will be added by the log.Draw() call.
-	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Example: Log", p_open);
-	if (ImGui::SmallButton("[Debug] Add 5 entries"))
-	{
-		static int counter = 0;
-		const char* categories[3] = { "info", "warn", "error" };
-		const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
-		for (int n = 0; n < 5; n++)
-		{
-			const char* category = categories[counter % IM_ARRAYSIZE(categories)];
-			const char* word = words[counter % IM_ARRAYSIZE(words)];
-			//log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-				//ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
-			counter++;
-		}
-	}
-	ImGui::End();
-
-	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
-	log.Draw("Example: Log", p_open);
-}
-
-void ModuleGUI::printLog(static char string[4096])
-{
-	log.AddLog(string);
-}
-
 // Called before GUI is available
 bool ModuleGUI::Init()
 {
-	//LOG("Creating GUI context");
+	LOG("Creating GUI context");
 
 	ImGui::CreateContext();
 
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	//ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -93,7 +61,7 @@ update_status ModuleGUI::PreUpdate()
 		ImGui::ShowDemoWindow(&demo);
 
 	if (show_app_log)
-	ShowExampleAppLog(&show_app_log, log);
+		console->Draw("Console", & show_app_log);
 
 	return UPDATE_CONTINUE;
 }
@@ -118,7 +86,7 @@ update_status ModuleGUI::PostUpdate()
 // Called before quitting
 bool ModuleGUI::CleanUp()
 {
-	//LOG("Destroying GUI");
+	LOG("Destroying GUI");
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -164,8 +132,8 @@ update_status ModuleGUI::Draw()
 			char title[25];
 			sprintf_s(title, 25, "Framerate % .1f", fps_log[fps_log.size() - 1]);
 			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-			sprintf_s(title, 25, "Milliseconds % .1f", ms_log[ms_log.size() - 1]);
-			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+			//sprintf_s(title, 25, "Milliseconds % .1f", ms_log[ms_log.size() - 1]);
+			//ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
 			// End FPS graph
 		}
 
