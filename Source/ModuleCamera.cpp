@@ -134,7 +134,7 @@ void ModuleCamera::LookAt(float3 position)
 	//frustum.SetFront(toLookAt.MulDir(frustum.Front().Normalized()));
 	//frustum.SetUp(toLookAt.MulDir(frustum.Up().Normalized()));
 
-	float3 targetDirection = frustum.Pos() - position;
+	float3 targetDirection = position - frustum.Pos();
 	
 	float3 front = targetDirection.Normalized();
 	frustum.SetFront(front);
@@ -144,6 +144,7 @@ void ModuleCamera::LookAt(float3 position)
 	frustum.SetUp(up.Normalized());
 	
 	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
 }
 
 void ModuleCamera::WindowResized(float aspectRatio, bool horizontal)
