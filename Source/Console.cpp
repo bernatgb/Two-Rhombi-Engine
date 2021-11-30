@@ -29,9 +29,9 @@ void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 	va_start(args, fmt);
 	buff.appendfv(fmt, args);
 	va_end(args);
-	for (int new_size = buff.size(); old_size < new_size; old_size++)
-		if (buff[old_size] == '\n')
-			lineOffsets.push_back(old_size + 1);
+	for (int new_size = buff.size(); old_size <= new_size; old_size++)
+		if (buff[old_size] == '\0')
+			lineOffsets.push_back(old_size); 
 }
 
 void Console::Draw(const char* title, bool* p_open)
