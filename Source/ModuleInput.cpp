@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
+#include "ModuleExercise.h"
 #include "SDL/include/SDL.h"
 #include "MathGeoLib.h"
 
@@ -150,7 +151,8 @@ update_status ModuleInput::Update()
 	// Focus the camera around the geometry
 	else if (keyboard[SDL_SCANCODE_F]) {
 		LOG("<F> is pressed.");
-		App->camera->LookAt(float3(0.0f, 0.0f, 0.0f));
+		float3 toLookAt = App->exercise->model.GetPos();
+		App->camera->LookAt(toLookAt);
 	}
 
 	// Have the camera speed double/triple if SHIFT is being pressed

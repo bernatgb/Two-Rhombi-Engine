@@ -61,3 +61,8 @@ void Model::LoadMeshes(const aiScene* scene)
 		mesh.Draw(textures);
 	}
 }
+
+float3 Model::GetPos()
+{
+	return tranform.TranslatePart();
+}

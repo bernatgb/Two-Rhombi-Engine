@@ -192,6 +192,5 @@ void ModuleExercise::RenderSquareVBO(unsigned vbo, unsigned program)
 
 void ModuleExercise::RenderBakerhouse(unsigned program)
 {
-	Model model;
 	model.Load("..\\Source\\baker_house_model\\Baker_house.png", "..\\Source\\baker_house_model\\BakerHouse.fbx", program);
 }

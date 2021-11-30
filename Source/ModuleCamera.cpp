@@ -17,7 +17,7 @@ bool ModuleCamera::Init()
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(0.1f, 200.0f);
 	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.3f);
-	frustum.SetPos(float3(0.0f, 1.0f, -3.0f));
+	frustum.SetPos(float3(0.0f, 1.0f, -5.0f));
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
@@ -82,7 +82,7 @@ void ModuleCamera::RotateCamera(char rotation)
 
 	switch (rotation)
 	{
-	// Have up/down arrow keys rotate the camera’s Pitch (Y axis)
+	// Have up/down arrow keys rotate the camera’s Pitch (X axis)
 	case 'u':
 		newOrientation = float3x3::RotateX(-0.05f);
 		frustum.SetFront(newOrientation.MulDir(frustum.Front().Normalized()));
@@ -95,7 +95,7 @@ void ModuleCamera::RotateCamera(char rotation)
 		frustum.SetUp(newOrientation.MulDir(frustum.Up().Normalized()));
 		break;
 
-	// Same for left/right affecting camera’s Yaw (Z axis)
+	// Same for left/right affecting camera’s Yaw (Y axis)
 	case 'l':
 		newOrientation = float3x3::RotateY(-0.05f);
 		frustum.SetFront(frustum.Front() * newOrientation);
@@ -127,10 +127,23 @@ void ModuleCamera::LookAt(float3 position)
 {
 	//float3 targetDirection = position - frustum.Pos();
 	//float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection.Normalized(), frustum.Up(), float3::unitY);
-	float3 targetDirection = frustum.Pos() - position.Normalized();
-	float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection, frustum.Up(), float3::unitY);
-	frustum.SetFront(toLookAt.MulDir(frustum.Front().Normalized()));
-	frustum.SetUp(toLookAt.MulDir(frustum.Up().Normalized()));
+	
+	//float3 targetDirection = frustum.Pos() - position.Normalized();
+	//float3x3 toLookAt = float3x3::LookAt(frustum.Front(), targetDirection, frustum.Up(), float3::unitY);
+	
+	//frustum.SetFront(toLookAt.MulDir(frustum.Front().Normalized()));
+	//frustum.SetUp(toLookAt.MulDir(frustum.Up().Normalized()));
+
+	float3 targetDirection = frustum.Pos() - position;
+	
+	float3 front = targetDirection.Normalized();
+	frustum.SetFront(front);
+	
+	float3 right = Cross(float3::unitY, front);
+	float3 up = Cross(front, right.Normalized());
+	frustum.SetUp(up.Normalized());
+	
+	view = float4x4(frustum.ViewMatrix());
 }
 
 void ModuleCamera::WindowResized(float aspectRatio, bool horizontal)
