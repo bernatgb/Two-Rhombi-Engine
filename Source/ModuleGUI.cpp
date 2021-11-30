@@ -60,9 +60,6 @@ update_status ModuleGUI::PreUpdate()
 	if (demo)
 		ImGui::ShowDemoWindow(&demo);
 
-	if (show_app_log)
-		console->Draw("Console", & show_app_log);
-
 	return UPDATE_CONTINUE;
 }
 
@@ -71,6 +68,9 @@ update_status ModuleGUI::Update()
 {
 	update_status draw = Draw();
 
+	if (show_app_log)
+		console->Draw("Console", &show_app_log);
+	
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -106,21 +106,21 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {	
+	// Rendering grid
+	float4x4 view, proj;
+	view = App->camera->view;
+	proj = App->camera->projection;
+
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	App->debugDraw->Draw(view, proj, w, h);
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleRender::PostUpdate()
 {
-	// Rendering grid
-	float4x4 view, proj;
-	view = App->camera->view;
-	proj = App->camera->projection;
-	
-	int w, h;
-	SDL_GetWindowSize(App->window->window, &w, &h);
-	
-	App->debugDraw->Draw(view, proj, w, h);
-
 	// Rendering
 	SDL_GL_SwapWindow(App->window->window);
 
