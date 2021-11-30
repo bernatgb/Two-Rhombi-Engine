@@ -11,13 +11,21 @@ Timer::~Timer()
 
 void Timer::Start()
 {
-	startMS = SDL_GetTicks();
+	startMS = previousFrameTime = SDL_GetTicks();
 	start = SDL_GetPerformanceCounter();
 }
 
 double Timer::ReadMS()
 {
 	return SDL_GetTicks() - startMS;
+}
+
+double Timer::Read4FrameInfo()
+{
+	double now = SDL_GetTicks();
+	double actualFrameTime = now - previousFrameTime;
+	previousFrameTime = now;
+	return actualFrameTime;
 }
 
 double Timer::Read()
@@ -36,7 +44,14 @@ double Timer::Stop()
 
 float Timer::FrameInfo()
 {
-	float frame_time = ReadMS();
+	float frame_time = Read4FrameInfo();
 	float fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+	// Regulate Framerate 
+	/*
+	if (fps > maxFPS)
+	{
+		SDL_Delay(fps - maxFPS);
+	}
+	*/
 	return fps;
 }

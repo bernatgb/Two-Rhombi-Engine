@@ -10,6 +10,8 @@ public:
 
 	double ReadMS(); // Read the miliseconds since “start” was called.
 
+	double Read4FrameInfo(); // Read the miliseconds since last time this function was called.
+
 	double Read(); // Read the microseconds since “start” was called.
 
 	double Stop(); // Stop the clock(+return current microseconds).
@@ -18,7 +20,8 @@ public:
 	float FrameInfo();
 
 private:
-	unsigned start, startMS = 0;
+	unsigned start, startMS, previousFrameTime = 0;
 	static unsigned frequency;
+	int maxFPS = 30;
 };
 
