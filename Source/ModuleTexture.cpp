@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "ModuleTexture.h"
 #include "DevIL/include/IL/il.h"
+#include "DevIL/include/IL/ilu.h"
 #include "SDL.h"
 #include "GL/glew.h"
 
@@ -38,6 +39,7 @@ unsigned ModuleTexture::LoadImage(const char* image)
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 	ilLoadImage(image);
+	iluFlipImage();
 	return imageID;
 }
 
