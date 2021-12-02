@@ -18,8 +18,8 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(program = new ModuleProgram());
-	modules.push_back(exercise = new ModuleExercise());
 	modules.push_back(texture = new ModuleTexture());
+	modules.push_back(exercise = new ModuleExercise());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 	modules.push_back(gui = new ModuleGUI());
