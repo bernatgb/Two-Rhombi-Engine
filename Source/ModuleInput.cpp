@@ -88,6 +88,10 @@ update_status ModuleInput::Update()
 					}
 				}
 				break;
+			case SDL_DROPFILE:
+				LOG("New model dropped.");
+				App->exercise->ModelDropped(sdlEvent.drop.file);
+				break;
 
         }
     }
