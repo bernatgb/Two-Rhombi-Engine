@@ -21,6 +21,7 @@ ModuleExercise::~ModuleExercise()
 
 bool ModuleExercise::Init()
 {
+	/*
 	// TRIANGLE
 	// loads a triangle into a VBO with vertices: (-1, -1, 0) (1, -1, 0) (0, 1, 0)
 	triangleVBO = CreateTriangleVBO();
@@ -46,7 +47,7 @@ bool ModuleExercise::Init()
 	unsigned fragmentShaderIDs = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoadedS);
 
 	squareProgram = App->program->CreateProgram(vertexShaderIDs, fragmentShaderIDs);
-
+	
 	// BAKERHOUSE
 	const char* vertexShaderLoadedB = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
 	const char* fragmentShaderLoadedB = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
@@ -55,6 +56,20 @@ bool ModuleExercise::Init()
 	unsigned fragmentShaderIDb = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoadedB);
 
 	bakerhouseProgram = App->program->CreateProgram(vertexShaderIDb, fragmentShaderIDb);
+	*/
+
+	const char* vertexShaderLoaded = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
+	const char* fragmentShaderLoaded = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
+
+	unsigned vertexShaderID = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoaded);
+	unsigned fragmentShaderID = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoaded);
+
+	modelProgram = App->program->CreateProgram(vertexShaderID, fragmentShaderID);
+
+	imageFile = "..\\Source\\baker_house_model\\Baker_house.png";
+	fbxFile = "..\\Source\\baker_house_model\\BakerHouse.fbx";
+
+	model.Load(imageFile, fbxFile, modelProgram);
 
 	return true;
 }
@@ -65,10 +80,13 @@ update_status ModuleExercise::Update()
 	//RenderTriangleVBO(triangleVBO, triangleProgram);
 
 	// renders VBO square using Hello World program
-	RenderSquareVBO(squareVBO, squareProgram);
+	//RenderSquareVBO(squareVBO, squareProgram);
 
 	// renders a bakerhouse
-	RenderBakerhouse(bakerhouseProgram);
+	//RenderBakerhouse(modelProgram);
+
+	// renders the model
+	model.Draw(modelProgram);
 
 	return UPDATE_CONTINUE;
 }
@@ -76,8 +94,14 @@ update_status ModuleExercise::Update()
 bool ModuleExercise::CleanUp()
 {
 	glDeleteBuffers(1, &triangleVBO);
-
 	glDeleteBuffers(1, &squareVBO);
+
+	glDeleteProgram(triangleProgram);
+	glDeleteProgram(squareProgram);
+	glDeleteProgram(bakerhouseProgram);
+	glDeleteProgram(modelProgram);
+
+	model.Clear();
 
 	return true;
 }
@@ -192,5 +216,19 @@ void ModuleExercise::RenderSquareVBO(unsigned vbo, unsigned program)
 
 void ModuleExercise::RenderBakerhouse(unsigned program)
 {
+	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);	
+	
 	model.Load("..\\Source\\baker_house_model\\Baker_house.png", "..\\Source\\baker_house_model\\BakerHouse.fbx", program);
+}
+
+void ModuleExercise::ModelDropped(const char* file)
+{
+	imageFile = file;
+	fbxFile = file;
+	model.Clear();
+	model.Load(imageFile, fbxFile, modelProgram);
 }

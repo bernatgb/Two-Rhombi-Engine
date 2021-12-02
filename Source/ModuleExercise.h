@@ -19,6 +19,8 @@ public:
 	void RenderTriangleVBO(unsigned vbo, unsigned program);
 	void RenderSquareVBO(unsigned vbo, unsigned program);
 	void RenderBakerhouse(unsigned program);
+	void RenderModel();
+	void ModelDropped(const char* file);
 
 	Model model;
 
@@ -28,4 +30,7 @@ private:
 	unsigned squareVBO;
 	unsigned squareProgram;
 	unsigned bakerhouseProgram;
+	unsigned modelProgram;
+	const char* fbxFile;
+	const char* imageFile;
 };

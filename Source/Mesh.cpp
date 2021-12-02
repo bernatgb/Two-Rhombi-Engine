@@ -81,7 +81,7 @@ void Mesh::CreateVAO()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * num_vertices));
 }
 
-void Mesh::Draw(const std::vector<unsigned>& model_textures)
+void Mesh::Draw(const std::vector<unsigned>& model_textures, unsigned program)
 {
 	const float4x4& view = App->camera->view;
 	const float4x4& proj = App->camera->projection;

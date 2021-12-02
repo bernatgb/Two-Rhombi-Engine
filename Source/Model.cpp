@@ -19,7 +19,7 @@ void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 	{
 		LoadMaterials(scene, image_name);
 		LoadTextures(scene, program);
-		LoadMeshes(scene);
+		LoadMeshes(scene, program);
 	}
 	else
 	{
@@ -49,7 +49,7 @@ void Model::LoadTextures(const aiScene* scene, unsigned program)
 	}
 }
 
-void Model::LoadMeshes(const aiScene* scene)
+void Model::LoadMeshes(const aiScene* scene, unsigned program)
 {
 	Mesh mesh;
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
@@ -58,7 +58,24 @@ void Model::LoadMeshes(const aiScene* scene)
 		mesh.LoadVBO(ai_mesh);
 		mesh.LoadEBO(ai_mesh);
 		mesh.CreateVAO();
-		mesh.Draw(textures);
+		mesh.Draw(textures, program);
+		meshes.push_back(mesh);
+	}
+}
+
+void Model::Clear()
+{
+	materials.clear();
+	textures.clear();
+	meshes.clear();
+}
+
+void Model::Draw(unsigned program)
+{
+	for (int i = 0; i < meshes.size(); ++i)
+	{
+		meshes[i].CreateVAO();
+		meshes[i].Draw(textures, program);
 	}
 }
 
