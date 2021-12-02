@@ -23,12 +23,12 @@ ModuleGUI::~ModuleGUI()
 // Called before GUI is available
 bool ModuleGUI::Init()
 {
-	LOG("Creating GUI context");
+	CONSOLELOG("Creating GUI context");
 
 	ImGui::CreateContext();
 
-	//ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -86,7 +86,7 @@ update_status ModuleGUI::PostUpdate()
 // Called before quitting
 bool ModuleGUI::CleanUp()
 {
-	LOG("Destroying GUI");
+	CONSOLELOG("Destroying GUI");
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -188,8 +188,8 @@ update_status ModuleGUI::Draw()
 			ImGui::Text("	*MathGeoLib");
 			ImGui::Text("	*SDL");
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 	// End Configuration
 
 	if (quit)

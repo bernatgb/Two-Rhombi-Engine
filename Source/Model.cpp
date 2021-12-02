@@ -10,7 +10,9 @@ Model::Model()
 {}
 
 Model::~Model()
-{}
+{
+	Clear();
+}
 
 void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 {
@@ -23,7 +25,7 @@ void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 	}
 	else
 	{
-		LOG("Error loading %s: %s", fbx_name, aiGetErrorString());
+		CONSOLELOG("Error loading %s: %s", fbx_name, aiGetErrorString());
 	}
 }
 
@@ -35,8 +37,8 @@ void Model::LoadMaterials(const aiScene* scene, const char* image_name)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
 		{
-			//materials.push_back(App->texture->LoadImage(file.data));
-			materials.push_back(App->texture->LoadImage(image_name));
+			materials.push_back(App->texture->LoadImage(file.data));
+			//materials.push_back(App->texture->LoadImage(image_name));
 		}
 	}
 }

@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include "Console.h"
 
-//#define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
+//#define CONSOLELOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
-#define LOG(format, ...) console->AddLog(format, __VA_ARGS__);
+#define CONSOLELOG(format, ...) console->AddLog(format, __VA_ARGS__);
 
 enum update_status
 {

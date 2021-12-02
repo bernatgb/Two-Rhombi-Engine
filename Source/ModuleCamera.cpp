@@ -111,6 +111,11 @@ void ModuleCamera::RotateCamera(char rotation)
 	projection = frustum.ProjectionMatrix();
 }
 
+void ModuleCamera::OrbitCamera(float3 position)
+{
+	float3 orbitTarget = position - frustum.Pos();
+}
+
 void ModuleCamera::DoubleSpeed(bool shiftPressed)
 {
 	if (shiftPressed) speed = 2.0f;

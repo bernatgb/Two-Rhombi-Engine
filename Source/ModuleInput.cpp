@@ -17,13 +17,13 @@ ModuleInput::~ModuleInput()
 // Called before render is available
 bool ModuleInput::Init()
 {
-	LOG("Init SDL input event system");
+	CONSOLELOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		CONSOLELOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -89,7 +89,7 @@ update_status ModuleInput::Update()
 				}
 				break;
 			case SDL_DROPFILE:
-				LOG("New model dropped.");
+				CONSOLELOG("New model dropped.");
 				App->exercise->ModelDropped(sdlEvent.drop.file);
 				break;
 
@@ -99,69 +99,76 @@ update_status ModuleInput::Update()
     keyboard = SDL_GetKeyboardState(NULL);
     
     if (keyboard[SDL_SCANCODE_ESCAPE]) {
-        LOG("<ESCAPE> is pressed.");
+        CONSOLELOG("<ESCAPE> is pressed.");
         return UPDATE_STOP;
     }
 	// Go up/down in absolute values
 	if (keyboard[SDL_SCANCODE_Q]) {
-		LOG("<Q> is pressed.");
+		CONSOLELOG("<Q> is pressed.");
 		App->camera->MoveCamera('q');
 	}
 	else if (keyboard[SDL_SCANCODE_E]) {
-		LOG("<E> is pressed.");
+		CONSOLELOG("<E> is pressed.");
 		App->camera->MoveCamera('e');
 	}
 
 	// Move forward and backward relative to camera orientation
 	else if (keyboard[SDL_SCANCODE_W]) {
-		LOG("<W> is pressed.");
+		CONSOLELOG("<W> is pressed.");
 		App->camera->MoveCamera('w');
 	}
 	else if (keyboard[SDL_SCANCODE_S]) {
-		LOG("<S> is pressed.");
+		CONSOLELOG("<S> is pressed.");
 		App->camera->MoveCamera('s');
 	}
 
 	// Move left and right relative to camera orientation
 	else if (keyboard[SDL_SCANCODE_A]) {
-		LOG("<A> is pressed.");
+		CONSOLELOG("<A> is pressed.");
 		App->camera->MoveCamera('a');
 	}
 	else if (keyboard[SDL_SCANCODE_D]) {
-		LOG("<D> is pressed.");
+		CONSOLELOG("<D> is pressed.");
 		App->camera->MoveCamera('d');
 	}
 
 	// Have up/down arrow keys rotate the camera’s Pitch (Y axis)
 	else if (keyboard[SDL_SCANCODE_UP]) {
-		LOG("<UP> is pressed.");
+		CONSOLELOG("<UP> is pressed.");
 		App->camera->RotateCamera('u');
 	}
 	else if (keyboard[SDL_SCANCODE_DOWN]) {
-		LOG("<DOWN> is pressed.");
+		CONSOLELOG("<DOWN> is pressed.");
 		App->camera->RotateCamera('d');
 	}
 
 	// Same for left/right affecting camera’s Yaw (Z axis)
 	else if (keyboard[SDL_SCANCODE_LEFT]) {
-		LOG("<LEFT> is pressed.");
+		CONSOLELOG("<LEFT> is pressed.");
 		App->camera->RotateCamera('l');
 	}
 	else if (keyboard[SDL_SCANCODE_RIGHT]) {
-		LOG("<RIGHT> is pressed.");
+		CONSOLELOG("<RIGHT> is pressed.");
 		App->camera->RotateCamera('r');
 	}
 
 	// Focus the camera around the geometry
 	else if (keyboard[SDL_SCANCODE_F]) {
-		LOG("<F> is pressed.");
+		CONSOLELOG("<F> is pressed.");
 		float3 toLookAt = App->exercise->model.GetPos();
 		App->camera->LookAt(toLookAt);
 	}
 
+	// Orbit the object
+	else if (keyboard[SDL_SCANCODE_LALT] || keyboard[SDL_SCANCODE_RALT]) {
+		CONSOLELOG("<ALT> is pressed.");
+		float3 modelPos = App->exercise->model.GetPos();
+		App->camera->OrbitCamera(modelPos);
+	}
+
 	// Have the camera speed double/triple if SHIFT is being pressed
 	while (keyboard[SDL_SCANCODE_LSHIFT]) {
-		LOG("<LSHIFT> is pressed.");
+		CONSOLELOG("<LSHIFT> is pressed.");
 		lshiftWasPressed = true;
 		App->camera->DoubleSpeed(true);
 	}
@@ -172,7 +179,7 @@ update_status ModuleInput::Update()
 	}
 
 	while (keyboard[SDL_SCANCODE_RSHIFT]) {
-		LOG("<RSHIFT> is pressed.");
+		CONSOLELOG("<RSHIFT> is pressed.");
 		rshiftWasPressed = true;
 		App->camera->TripleSpeed(true);
 	}
@@ -203,7 +210,7 @@ update_status ModuleInput::Update()
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
-	LOG("Quitting SDL input event subsystem");
+	CONSOLELOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }

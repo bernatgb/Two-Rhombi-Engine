@@ -15,6 +15,7 @@ public:
 
 	void MoveCamera(char direction);
 	void RotateCamera(char rotarion);
+	void OrbitCamera(float3 position);
 	void DoubleSpeed(bool shiftPressed);
 	void TripleSpeed(bool shiftPressed);
 	void LookAt(float3 position);

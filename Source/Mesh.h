@@ -20,5 +20,4 @@ private:
 	unsigned num_indices;
 	unsigned vao;
 	unsigned material_index;
-	unsigned program;
 };

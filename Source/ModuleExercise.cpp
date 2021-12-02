@@ -66,8 +66,8 @@ bool ModuleExercise::Init()
 
 	modelProgram = App->program->CreateProgram(vertexShaderID, fragmentShaderID);
 
-	imageFile = "..\\Source\\baker_house_model\\Baker_house.png";
-	fbxFile = "..\\Source\\baker_house_model\\BakerHouse.fbx";
+	//imageFile = "..\\Source\\baker_house_model\\Baker_house.png";
+	fbxFile = "BakerHouse.fbx";
 
 	model.Load(imageFile, fbxFile, modelProgram);
 
