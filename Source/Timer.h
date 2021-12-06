@@ -10,8 +10,6 @@ public:
 
 	double ReadMS(); // Read the miliseconds since “start” was called.
 
-	double Read4FrameInfo(); // Read the miliseconds since last time this function was called.
-
 	double Read(); // Read the microseconds since “start” was called.
 
 	double Stop(); // Stop the clock(+return current microseconds).
@@ -19,9 +17,19 @@ public:
 
 	float FrameInfo();
 
+	bool GetRegulateFramerate();
+	void SetRegulateFramerate();
+	bool GetDoubleFramerate();
+	void SetDoubleFramerate();
+
 private:
 	unsigned start, startMS, previousFrameTime = 0;
 	static unsigned frequency;
-	int maxFPS = 30;
+	int max30FPS = 30;
+	double maxFT30 = 1000 / max30FPS;
+	int max60FPS = 60;
+	double maxFT60 = 1000 / max60FPS;
+	bool regulateFramerate = false; 
+	bool doubleFramerate = false;
 };
 

@@ -17,10 +17,12 @@ public:
 	void Clear();
 	void Draw(unsigned program);
 	float3 GetPos();
+	const char* GetImageName(const char* fbx_name);
 
 private:
 	float4x4 tranform = float4x4::identity;
 	std::vector<unsigned> materials;
 	std::vector<unsigned> textures;
 	std::vector<Mesh> meshes;
+	const char* imageName;
 };

@@ -161,3 +161,42 @@ void ModuleCamera::WindowResized(float aspectRatio, bool horizontal)
 
 	projection = frustum.ProjectionMatrix();
 }
+
+void ModuleCamera::ResetCamera()
+{
+	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	frustum.SetViewPlaneDistances(0.1f, 200.0f);
+	frustum.SetHorizontalFovAndAspectRatio(DegToRad(90.0f), 1.3f);
+	frustum.SetPos(float3(0.0f, 1.0f, -5.0f));
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
+
+	model = float4x4::identity; 
+	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
+}
+
+float4x4 ModuleCamera::GetModelMatrix()
+{
+	return model;
+}
+
+float4x4 ModuleCamera::GetViewMatrix()
+{
+	return view;
+}
+
+float4x4 ModuleCamera::GetProjectionMatrix()
+{
+	return projection;
+}
+
+float3x3 ModuleCamera::GetTransform()
+{
+	float3 pos = frustum.Pos();
+	float3 front = frustum.Front();
+	float3 up = frustum.Up();
+	float3x3 transform = float3x3(pos, front, up);
+	float3 a = transform.Col(0);
+	return transform;
+}

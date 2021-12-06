@@ -155,15 +155,23 @@ update_status ModuleInput::Update()
 	// Focus the camera around the geometry
 	else if (keyboard[SDL_SCANCODE_F]) {
 		CONSOLELOG("<F> is pressed.");
-		float3 toLookAt = App->exercise->model.GetPos();
+		Model model = App->exercise->GetModel();
+		float3 toLookAt = model.GetPos();
 		App->camera->LookAt(toLookAt);
 	}
 
 	// Orbit the object
 	else if (keyboard[SDL_SCANCODE_LALT] || keyboard[SDL_SCANCODE_RALT]) {
 		CONSOLELOG("<ALT> is pressed.");
-		float3 modelPos = App->exercise->model.GetPos();
+		Model model = App->exercise->GetModel();
+		float3 modelPos = model.GetPos();
 		App->camera->OrbitCamera(modelPos);
+	}
+
+	// Reset the camera
+	else if (keyboard[SDL_SCANCODE_R]) {
+		CONSOLELOG("<R> is pressed.");
+		App->camera->ResetCamera();
 	}
 
 	// Have the camera speed double/triple if SHIFT is being pressed

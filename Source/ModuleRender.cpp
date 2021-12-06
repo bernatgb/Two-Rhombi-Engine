@@ -108,8 +108,8 @@ update_status ModuleRender::Update()
 {	
 	// Rendering grid
 	float4x4 view, proj;
-	view = App->camera->view;
-	proj = App->camera->projection;
+	view = App->camera->GetViewMatrix();
+	proj = App->camera->GetProjectionMatrix();
 
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);

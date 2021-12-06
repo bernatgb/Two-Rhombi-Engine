@@ -19,12 +19,15 @@ public:
 	void DoubleSpeed(bool shiftPressed);
 	void TripleSpeed(bool shiftPressed);
 	void LookAt(float3 position);
-	void WindowResized(float aspectRatio, bool horizontal);
-
-	float4x4 model, view, projection;
-	
+	void WindowResized(float aspectRatio, bool horizontal);	
+	void ResetCamera();
+	float4x4 GetModelMatrix();
+	float4x4 GetViewMatrix();
+	float4x4 GetProjectionMatrix();
+	float3x3 GetTransform();
 
 private:
 	Frustum frustum;
+	float4x4 model, view, projection;
 	float speed = 1.0f;
 };

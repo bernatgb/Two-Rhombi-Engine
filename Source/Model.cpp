@@ -85,3 +85,18 @@ float3 Model::GetPos()
 {
 	return tranform.TranslatePart();
 }
+
+const char* Model::GetImageName(const char* fbx_name)
+{
+	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	if (scene)
+	{
+		aiString file;
+		// assuming only one material
+		if (scene->mMaterials[0]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
+		{
+			return file.data;
+		}
+	}
+	return "(null)";
+}

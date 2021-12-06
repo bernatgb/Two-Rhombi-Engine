@@ -83,10 +83,10 @@ update_status ModuleExercise::Update()
 	//RenderSquareVBO(squareVBO, squareProgram);
 
 	// renders a bakerhouse
-	//RenderBakerhouse(modelProgram);
+	//RenderBakerhouse(bakerhouseProgram);
 
 	// renders the model
-	model.Draw(modelProgram);
+	RenderModel(modelProgram);
 
 	return UPDATE_CONTINUE;
 }
@@ -166,9 +166,9 @@ void ModuleExercise::RenderTriangleVBO(unsigned vbo, unsigned program)
 {
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->GetModelMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->GetViewMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->GetProjectionMatrix()[0][0]);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -192,9 +192,9 @@ void ModuleExercise::RenderSquareVBO(unsigned vbo, unsigned program)
 {
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->GetModelMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->GetViewMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->GetProjectionMatrix()[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -218,11 +218,22 @@ void ModuleExercise::RenderBakerhouse(unsigned program)
 {
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->projection[0][0]);	
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->GetModelMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->GetViewMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->GetProjectionMatrix()[0][0]);
 	
 	model.Load("..\\Source\\baker_house_model\\Baker_house.png", "..\\Source\\baker_house_model\\BakerHouse.fbx", program);
+}
+
+void ModuleExercise::RenderModel(unsigned program)
+{
+	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &App->camera->GetModelMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &App->camera->GetViewMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &App->camera->GetProjectionMatrix()[0][0]);
+
+	model.Draw(program);
 }
 
 void ModuleExercise::ModelDropped(const char* file)
@@ -231,4 +242,19 @@ void ModuleExercise::ModelDropped(const char* file)
 	fbxFile = file;
 	model.Clear();
 	model.Load(imageFile, fbxFile, modelProgram);
+}
+
+Model ModuleExercise::GetModel()
+{
+	return model;
+}
+
+const char* ModuleExercise::Getfbx()
+{
+	return fbxFile;
+}
+
+const char* ModuleExercise::Getimage()
+{
+	return model.GetImageName(fbxFile);
 }

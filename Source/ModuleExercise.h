@@ -19,10 +19,13 @@ public:
 	void RenderTriangleVBO(unsigned vbo, unsigned program);
 	void RenderSquareVBO(unsigned vbo, unsigned program);
 	void RenderBakerhouse(unsigned program);
-	void RenderModel();
+	void RenderModel(unsigned program);
 	void ModelDropped(const char* file);
+	Model GetModel();
+	const char* Getfbx();
+	const char* Getimage();
 
-	Model model;
+
 
 private:
 	unsigned triangleVBO;
@@ -33,4 +36,5 @@ private:
 	unsigned modelProgram;
 	const char* fbxFile;
 	const char* imageFile;
+	Model model;
 };

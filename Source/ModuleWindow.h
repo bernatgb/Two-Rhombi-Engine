@@ -26,6 +26,10 @@ public:
 
 	void SetFullscreen(bool fullscreen);
 	void SetResizable(bool resizable);
+	int GetWidth();
+	int GetHeight();
+	void SetWidth(int newWidth);
+	void SetHeight(int newHeight);
 
 	
 public:

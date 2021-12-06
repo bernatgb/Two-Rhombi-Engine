@@ -119,3 +119,23 @@ void ModuleWindow::SetResizable(bool resizable)
 {
 	SDL_SetWindowResizable(window, (SDL_bool)resizable);
 }
+
+int ModuleWindow::GetWidth()
+{
+	return screen_surface->w;
+}
+
+int ModuleWindow::GetHeight()
+{
+	return screen_surface->h;
+}
+
+void ModuleWindow::SetWidth(int newWidth)
+{
+	SDL_SetWindowSize(window, newWidth, screen_surface->h);
+}
+
+void ModuleWindow::SetHeight(int newHeight)
+{
+	SDL_SetWindowSize(window, screen_surface->w, newHeight);
+}

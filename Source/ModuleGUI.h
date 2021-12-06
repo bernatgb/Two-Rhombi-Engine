@@ -18,6 +18,12 @@ struct HardwareInfo
 	int vram_free;
 };
 
+struct SoftwareInfo
+{
+	SDL_version sdl_version;
+	char* gl_version;
+};
+
 class ModuleGUI : public Module
 {
 public:
@@ -34,8 +40,9 @@ public:
 
 private:
 	bool demo = false;
-	bool show_app_log = true;
+	bool show_app_log = false;
 	HardwareInfo hardware;
+	SoftwareInfo software;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 	bool fullscreen = false;
@@ -43,4 +50,7 @@ private:
 	int index = 0;
 	bool complete = false;
 	Timer timer;
+	bool regulateFramerate;
+	bool doubleFramerate;
+	bool notDoubleFramerate;
 };

@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "Globals.h"
 #include "SDL/include/SDL.h"
 
 unsigned Timer::frequency = SDL_GetPerformanceFrequency();
@@ -20,14 +21,6 @@ double Timer::ReadMS()
 	return SDL_GetTicks() - startMS;
 }
 
-double Timer::Read4FrameInfo()
-{
-	double now = SDL_GetTicks();
-	double actualFrameTime = now - previousFrameTime;
-	previousFrameTime = now;
-	return actualFrameTime;
-}
-
 double Timer::Read()
 {
 	return SDL_GetPerformanceCounter() - start;
@@ -44,14 +37,52 @@ double Timer::Stop()
 
 float Timer::FrameInfo()
 {
-	float frame_time = Read4FrameInfo();
-	float fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+	double now = SDL_GetTicks();
+	double actualFrameTime = now - previousFrameTime;
+
 	// Regulate Framerate 
-	/*
-	if (fps > maxFPS)
+	if (regulateFramerate)
 	{
-		SDL_Delay(fps - maxFPS);
+		if (!doubleFramerate)
+		{	
+			if (maxFT30 > actualFrameTime)
+			{
+				SDL_Delay(maxFT30 - actualFrameTime);
+				actualFrameTime = SDL_GetTicks() - previousFrameTime;
+			}
+		}
+		else
+		{
+			if (maxFT60 > actualFrameTime)
+			{
+				SDL_Delay(maxFT60 - actualFrameTime);
+				actualFrameTime = SDL_GetTicks() - previousFrameTime;
+			}
+		}
 	}
-	*/
+	previousFrameTime = now;
+
+	float fps = (actualFrameTime > 0) ? 1000.0f / actualFrameTime : 0.0f;
+
 	return fps;
+}
+
+bool Timer::GetRegulateFramerate() 
+{
+	return regulateFramerate;
+}
+
+void Timer::SetRegulateFramerate()
+{
+	regulateFramerate = !regulateFramerate;
+}
+
+bool Timer::GetDoubleFramerate()
+{
+	return doubleFramerate;
+}
+
+void Timer::SetDoubleFramerate()
+{
+	doubleFramerate = !doubleFramerate;
 }
