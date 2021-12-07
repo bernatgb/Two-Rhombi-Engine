@@ -28,7 +28,7 @@ update_status ModuleTexture::Update()
 
 bool ModuleTexture::CleanUp()
 {
-	glDeleteTextures(1, &imageID);
+	//glDeleteTextures(1, &imageID);
 
 	return true;
 }
@@ -36,6 +36,7 @@ bool ModuleTexture::CleanUp()
 unsigned ModuleTexture::LoadImage(const char* image)
 {
 	// Load image data with DevIL into CPU
+	unsigned imageID;
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 	ilLoadImage(image);
@@ -46,6 +47,7 @@ unsigned ModuleTexture::LoadImage(const char* image)
 void ModuleTexture::LoadTexture(unsigned program)
 {
 	// Create and load OpenGL texture into GPU
+	unsigned imageID;
 	glGenTextures(1, &imageID);
 	glBindTexture(GL_TEXTURE_2D, imageID);
 	
@@ -69,7 +71,7 @@ void ModuleTexture::LoadTexture(unsigned program)
 	ilDeleteImages(1, &imageID);
 }
 
-unsigned ModuleTexture::LoadTextureFromImage(unsigned image, unsigned program)
+unsigned ModuleTexture::LoadTextureFromMaterial(unsigned image, unsigned program)
 {
 	glGenTextures(1, &image);
 	glBindTexture(GL_TEXTURE_2D, image);
@@ -84,4 +86,27 @@ unsigned ModuleTexture::LoadTextureFromImage(unsigned image, unsigned program)
 		ilGetData());
 
 	return image;
+}
+
+unsigned ModuleTexture::LoadTextureFromImage(const char* image, unsigned program)
+{
+	unsigned imageID;
+	//ilGenImages(1, &imageID);
+	//ilBindImage(imageID);
+	ilLoadImage(image);
+	iluFlipImage();
+
+	glGenTextures(1, &imageID);
+	glBindTexture(GL_TEXTURE_2D, imageID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
+	 interpolation for magnification filter */
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
+	  interpolation for minifying filter */
+
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
+		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
+		ilGetData());
+
+	return imageID;
 }

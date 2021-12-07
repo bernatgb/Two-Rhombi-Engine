@@ -16,10 +16,10 @@ Model::~Model()
 
 void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 {
-	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate);
 	if (scene)
 	{
-		LoadMaterials(scene, image_name);
+		//LoadMaterials(scene, image_name);
 		LoadTextures(scene, program);
 		LoadMeshes(scene, program);
 	}
@@ -45,10 +45,23 @@ void Model::LoadMaterials(const aiScene* scene, const char* image_name)
 
 void Model::LoadTextures(const aiScene* scene, unsigned program)
 {
+	textures.reserve(materials.size());
+	aiString file;
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{
-		textures.push_back(App->texture->LoadTextureFromImage(materials[i], program));
+		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
+			textures.push_back(App->texture->LoadTextureFromImage(file.data, program));
+		else
+		{
+			int j = 0;
+		}
 	}
+	/*
+	for (unsigned i = 0; i < materials.size(); ++i)
+	{
+		textures.push_back(App->texture->LoadTextureFromMaterials(materials[i], program));
+	}
+	*/
 }
 
 void Model::LoadMeshes(const aiScene* scene, unsigned program)
@@ -60,7 +73,10 @@ void Model::LoadMeshes(const aiScene* scene, unsigned program)
 		mesh.LoadVBO(ai_mesh);
 		mesh.LoadEBO(ai_mesh);
 		mesh.CreateVAO();
-		mesh.Draw(textures, program);
+		int j = i;
+		if (textures.size() <= i)
+			j = i - 1;
+		mesh.Draw(textures, program, j);
 		meshes.push_back(mesh);
 	}
 }
@@ -76,8 +92,11 @@ void Model::Draw(unsigned program)
 {
 	for (int i = 0; i < meshes.size(); ++i)
 	{
-		meshes[i].CreateVAO();
-		meshes[i].Draw(textures, program);
+		meshes[i].CreateVAO();		
+		int j = i;
+		if (textures.size() <= i)
+			j = i - 1;
+		meshes[i].Draw(textures, program, j);
 	}
 }
 
@@ -86,17 +105,23 @@ float3 Model::GetPos()
 	return tranform.TranslatePart();
 }
 
-const char* Model::GetImageName(const char* fbx_name)
+std::vector<std::string> Model::GetImageName(const char* fbx_name)
 {
+	std::vector<std::string> names;
 	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene)
 	{
 		aiString file;
-		// assuming only one material
-		if (scene->mMaterials[0]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
+		for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 		{
-			return file.data;
+			if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
+			{
+				std::string s(file.data);
+				names.push_back(s);
+			}
 		}
+		return names;
 	}
-	return "(null)";
+	names.push_back("(not found)");
+	return names;
 }

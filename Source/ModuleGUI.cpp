@@ -212,8 +212,15 @@ update_status ModuleGUI::Draw()
 		{
 			const char* fbx = App->exercise->Getfbx();
 			ImGui::Text("fbx file name: %s", fbx);
-			const char* image = App->exercise->Getimage();
-			ImGui::Text("Texture image name: %s", image);
+			if (ImGui::TreeNode("Textures"))
+			{
+				std::vector<std::string> images = App->exercise->Getimage();
+				for (int i = 0; i < images.size(); ++i)
+				{
+					ImGui::Text("Texture %i image name: %s", i + 1, images[i].c_str());
+				}
+				ImGui::TreePop();
+			}
 		}
 
 

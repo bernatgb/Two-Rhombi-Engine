@@ -67,7 +67,9 @@ bool ModuleExercise::Init()
 	modelProgram = App->program->CreateProgram(vertexShaderID, fragmentShaderID);
 
 	//imageFile = "..\\Source\\baker_house_model\\Baker_house.png";
-	fbxFile = "BakerHouse.fbx";
+	//fbxFile = "BakerHouse.fbx";
+	fbxFile = "Dragon 2.5_fbx.fbx"; 
+	//fbxFile = "DoubleDeckerBus.fbx";
 
 	model.Load(imageFile, fbxFile, modelProgram);
 
@@ -254,7 +256,7 @@ const char* ModuleExercise::Getfbx()
 	return fbxFile;
 }
 
-const char* ModuleExercise::Getimage()
+std::vector<std::string> ModuleExercise::Getimage()
 {
 	return model.GetImageName(fbxFile);
 }

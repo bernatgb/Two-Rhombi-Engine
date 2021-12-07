@@ -23,7 +23,7 @@ public:
 	void ModelDropped(const char* file);
 	Model GetModel();
 	const char* Getfbx();
-	const char* Getimage();
+	std::vector<std::string> Getimage();
 
 
 

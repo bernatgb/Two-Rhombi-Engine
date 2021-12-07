@@ -2,7 +2,6 @@
 #include "Mesh.h" 
 #include "assimp/scene.h"
 #include "MathGeoLib.h"
-#include <vector>
 
 class Model
 {
@@ -17,7 +16,7 @@ public:
 	void Clear();
 	void Draw(unsigned program);
 	float3 GetPos();
-	const char* GetImageName(const char* fbx_name);
+	std::vector<std::string> GetImageName(const char* fbx_name);
 
 private:
 	float4x4 tranform = float4x4::identity;
