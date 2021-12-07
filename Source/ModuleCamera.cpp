@@ -200,3 +200,21 @@ float3x3 ModuleCamera::GetTransform()
 	float3 a = transform.Col(0);
 	return transform;
 }
+
+float ModuleCamera::GetCameraSpeed()
+{
+	return speed;
+}
+
+void ModuleCamera::SetCamera(float3 max, float3 min)
+{
+	float x = (max.x + min.x) * 0.5;
+	float y = (max.y + min.y) * 0.5;
+	float z = math::Sqrt(math::Abs(((max.x * max.x) + (max.y * max.y))));
+
+	frustum.SetPos(float3(x, y, -z));
+	frustum.SetFront(float3::unitZ);
+	frustum.SetUp(float3::unitY);
+	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
+}

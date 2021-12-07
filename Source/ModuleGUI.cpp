@@ -5,6 +5,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleExercise.h"
+#include "ModuleDebugDraw.h"
 #include "Timer.h"
 #include "Console.h"
 #include "SDL.h"
@@ -25,7 +26,7 @@ ModuleGUI::~ModuleGUI()
 // Called before GUI is available
 bool ModuleGUI::Init()
 {
-	CONSOLELOG("Creating GUI context");
+	CONSOLELOG("Creating GUI context.");
 
 	ImGui::CreateContext();
 
@@ -76,8 +77,14 @@ update_status ModuleGUI::Update()
 {
 	update_status draw = Draw();
 
+	if (about)
+		DrawAbout(&about);
+
 	if (show_app_log)
 		console->Draw("Console", &show_app_log);
+
+	if (config)
+		DrawConfig(&config);
 	
 	// Rendering
 	ImGui::Render();
@@ -109,27 +116,72 @@ update_status ModuleGUI::Draw()
 	// Menu
 	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginMenu("File")) {
+		if (ImGui::BeginMenu("Menu")) {
 			if (ImGui::MenuItem("Quit"))
 			{
 				quit = true;
 			}
+			if (ImGui::MenuItem("Visit Github page"))
+			{
+				ShellExecute(NULL, "open", "https://github.com/bernatgb/Two-Rhombi-Engine", NULL, NULL, SW_SHOWNORMAL);
+			}
+			if (ImGui::MenuItem("About"))
+			{
+				about = !about;
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Controllers")) {
 			if (ImGui::MenuItem("Console"))
 			{
 				show_app_log = !show_app_log;
 			}
-		ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Edit")) {
-			if (ImGui::MenuItem("Cut")) {}
-			if (ImGui::MenuItem("Copy")) {}
-			if (ImGui::MenuItem("Paste")) {}
-			if (ImGui::MenuItem("Delete")) {}
+			if (ImGui::MenuItem("Configuration"))
+			{
+				config = !config;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 	// End Menu
+
+	if (quit)
+		return UPDATE_STOP;
+	else
+		return UPDATE_CONTINUE;
+}
+
+void ModuleGUI::DrawAbout(bool* about)
+{
+	if (!ImGui::Begin("About", about))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::Text("Engine name: Two Rhombi Engine");
+	ImGui::Text("Description: Engine made in UPC Master");
+	ImGui::Text("Author: Bernat Güell");
+	ImGui::Separator();
+	ImGui::Text("Libraries:");
+	ImGui::BulletText("DevIL");
+	ImGui::BulletText("GLEW");
+	ImGui::BulletText("ImGui");
+	ImGui::BulletText("MathGeoLib");
+	ImGui::BulletText("SDL");
+
+	ImGui::End();
+}
+
+void ModuleGUI::DrawConfig(bool* config)
+{
+	if (!ImGui::Begin("Configuration", config))
+	{
+		ImGui::End();
+		return;
+	}
 
 	// Configuration
 	if (ImGui::Begin("Configuration"))
@@ -147,7 +199,7 @@ update_status ModuleGUI::Draw()
 			//sprintf_s(title, 25, "Milliseconds % .1f", ms_log[ms_log.size() - 1]);
 			//ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
 			// End FPS graph
-			
+
 			ImGui::Separator();
 
 			if (ImGui::Checkbox("Regulate frame rate", &regulateFramerate))
@@ -200,26 +252,50 @@ update_status ModuleGUI::Draw()
 			// End Window options
 		}
 
+		if (ImGui::CollapsingHeader("Debug draw"))
+		{
+			bool enabled = App->debugDraw->GetDebugDrawEnabled();
+			if (ImGui::Checkbox("Enable debug draw", &enabled))
+				App->debugDraw->SetDebugDrawEnabled();
+		}
+
 		if (ImGui::CollapsingHeader("Camera"))
 		{
 			float3x3 transform = App->camera->GetTransform();
 			ImGui::Text("Position: (%f,%f,%f)", transform.Col(0).x, transform.Col(0).y, transform.Col(0).z);
 			ImGui::Text("Front: (%f,%f,%f)", transform.Col(1).x, transform.Col(1).y, transform.Col(1).z);
 			ImGui::Text("Up: (%f,%f,%f)", transform.Col(2).x, transform.Col(2).y, transform.Col(2).z);
+			ImGui::Text("Camera speed: %f", App->camera->GetCameraSpeed());
 		}
 
 		if (ImGui::CollapsingHeader("Model"))
 		{
 			const char* fbx = App->exercise->Getfbx();
 			ImGui::Text("fbx file name: %s", fbx);
-			if (ImGui::TreeNode("Textures"))
+			Model model = App->exercise->GetModel();
+			if (ImGui::TreeNode("Transform"))
 			{
-				std::vector<std::string> images = App->exercise->Getimage();
-				for (int i = 0; i < images.size(); ++i)
+				ImGui::BulletText("Postion: (%f, %f, %f)", model.GetPosition().x, model.GetPosition().y, model.GetPosition().z);
+
+				ImGui::BulletText("Rotation Matrix: (%f, %f, %f)", model.GetRotation()[0][0], model.GetRotation()[0][1], model.GetRotation()[0][2]);
+				ImGui::Text("					(%f, %f, %f)", model.GetRotation()[1][0], model.GetRotation()[1][1], model.GetRotation()[1][2]);
+				ImGui::Text("					(%f, %f, %f)", model.GetRotation()[2][0], model.GetRotation()[2][1], model.GetRotation()[2][2]);
+
+				ImGui::BulletText("Scale: (%f, %f, %f)", model.GetScale().x, model.GetScale().y, model.GetScale().z);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Meshes & textures"))
+			{
+				std::vector<int> faces = model.GetFaces();
+				std::vector<std::string> images = model.GetImagesNames();
+				for (int i = 0; i < faces.size(); ++i)
 				{
-					ImGui::Text("Texture %i image name: %s", i + 1, images[i].c_str());
+					ImGui::BulletText("Mesh %i:", i + 1); 
+					ImGui::Text("	has %i triangles", faces[i]);
+					ImGui::Text("	its texture image name is %s", images[i].c_str());
 				}
 				ImGui::TreePop();
+
 			}
 		}
 
@@ -252,27 +328,10 @@ update_status ModuleGUI::Draw()
 				ImGui::TreePop();
 			}
 
-		}
-
-		if (ImGui::CollapsingHeader("About"))
-		{
-			ImGui::Text("Engine name: Two Rhombi Engine");
-			ImGui::Text("Description: Engine made in UPC Master");
-			ImGui::Text("Author: Bernat Güell");
-			ImGui::Separator();
-			ImGui::Text("Libraries:");
-			ImGui::Text("	*DevIL");
-			ImGui::Text("	*GLEW");
-			ImGui::Text("	*ImGui");
-			ImGui::Text("	*MathGeoLib");
-			ImGui::Text("	*SDL");
-		}
+		}	
+		ImGui::End();	
 	}
-	ImGui::End();
 	// End Configuration
-
-	if (quit)
-		return UPDATE_STOP;
-	else
-		return UPDATE_CONTINUE;
+	
+	ImGui::End();
 }

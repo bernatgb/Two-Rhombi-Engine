@@ -6,7 +6,9 @@
 #include "MathGeoLib.h"
 
 Mesh::Mesh()
-{}
+{
+	//maxX = maxY = maxZ = minX = minY = minZ = 0.0f;
+}
 
 Mesh::~Mesh()
 {
@@ -15,7 +17,7 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void Mesh::LoadVBO(const aiMesh* mesh)
+void Mesh::LoadVBO(const aiMesh* mesh, float* maxX, float* maxY, float* maxZ, float* minX, float* minY, float* minZ)
 {
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -38,6 +40,19 @@ void Mesh::LoadVBO(const aiMesh* mesh)
 	for (unsigned i = 0; i < mesh->mNumVertices; ++i)
 	{
 		uvs[i] = float2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+		aiVector3D vertex = mesh->mVertices[i];
+		if (*maxX < vertex.x)
+			*maxX = vertex.x;
+		if (*maxY < vertex.y)
+			*maxY = vertex.y;
+		if (*maxZ < vertex.z)
+			*maxZ = vertex.z;
+		if (*minX > vertex.x)
+			*minX = vertex.x;
+		if (*minY > vertex.y)
+			*minY = vertex.y;
+		if (*minZ > vertex.z)
+			*minZ = vertex.z;
 	}
 
 	glUnmapBuffer(GL_ARRAY_BUFFER); // must be called when you are done with glMapBufferRange pointer.

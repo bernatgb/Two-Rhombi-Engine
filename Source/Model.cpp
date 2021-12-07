@@ -16,16 +16,19 @@ Model::~Model()
 
 void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 {
+	maxX = maxY = maxZ = minX = minY = minZ = 0.0f;
+
 	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate);
 	if (scene)
 	{
+		CONSOLELOG("File %s imported successfully.", fbx_name);
 		//LoadMaterials(scene, image_name);
 		LoadTextures(scene, program);
 		LoadMeshes(scene, program);
 	}
 	else
 	{
-		CONSOLELOG("Error loading %s: %s", fbx_name, aiGetErrorString());
+		CONSOLELOG("Error loading %s: %s.", fbx_name, aiGetErrorString());
 	}
 }
 
@@ -50,10 +53,11 @@ void Model::LoadTextures(const aiScene* scene, unsigned program)
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
-			textures.push_back(App->texture->LoadTextureFromImage(file.data, program));
-		else
 		{
-			int j = 0;
+			CONSOLELOG("Texture added.");
+			textures.push_back(App->texture->LoadTextureFromImage(file.data, program));
+			std::string s(file.data);
+			imagesNames.push_back(s);
 		}
 	}
 	/*
@@ -70,14 +74,22 @@ void Model::LoadMeshes(const aiScene* scene, unsigned program)
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
 	{
 		const aiMesh* ai_mesh = scene->mMeshes[i];
-		mesh.LoadVBO(ai_mesh);
+		mesh.LoadVBO(ai_mesh, &maxX, &maxY, &maxZ, &minX, &minY, &minZ);
+		CONSOLELOG("VBO loaded.");
 		mesh.LoadEBO(ai_mesh);
+		CONSOLELOG("EBO loaded.");
 		mesh.CreateVAO();
+		CONSOLELOG("VAO created.");
 		int j = i;
 		if (textures.size() <= i)
+		{
 			j = i - 1;
+			imagesNames.push_back(imagesNames[j]);
+		}
 		mesh.Draw(textures, program, j);
+		CONSOLELOG("Mesh drawn.");
 		meshes.push_back(mesh);
+		faces.push_back(ai_mesh->mNumFaces);
 	}
 }
 
@@ -86,6 +98,9 @@ void Model::Clear()
 	materials.clear();
 	textures.clear();
 	meshes.clear();
+	faces.clear();
+	imagesNames.clear();
+	CONSOLELOG("Model cleared.");
 }
 
 void Model::Draw(unsigned program)
@@ -100,28 +115,37 @@ void Model::Draw(unsigned program)
 	}
 }
 
-float3 Model::GetPos()
+float3 Model::GetPosition()
 {
 	return tranform.TranslatePart();
 }
 
-std::vector<std::string> Model::GetImageName(const char* fbx_name)
+float3x3 Model::GetRotation()
 {
-	std::vector<std::string> names;
-	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality);
-	if (scene)
-	{
-		aiString file;
-		for (unsigned i = 0; i < scene->mNumMaterials; ++i)
-		{
-			if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
-			{
-				std::string s(file.data);
-				names.push_back(s);
-			}
-		}
-		return names;
-	}
-	names.push_back("(not found)");
-	return names;
+	return tranform.RotatePart();
+}
+
+float3 Model::GetScale()
+{
+	return tranform.GetScale();
+}
+
+std::vector<int> Model::GetFaces()
+{
+	return faces;
+}
+
+std::vector<std::string> Model::GetImagesNames()
+{
+	return imagesNames;
+}
+
+float3 Model::GetMax()
+{
+	return float3(maxX, maxY, maxZ);
+}
+
+float3 Model::GetMin()
+{
+	return float3(minX, minY, minZ);
 }

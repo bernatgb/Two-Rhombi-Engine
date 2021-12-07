@@ -25,6 +25,8 @@ public:
 	float4x4 GetViewMatrix();
 	float4x4 GetProjectionMatrix();
 	float3x3 GetTransform();
+	float GetCameraSpeed();
+	void SetCamera(float3 max, float3 min);
 
 private:
 	Frustum frustum;

@@ -15,13 +15,20 @@ public:
 	void LoadMeshes(const aiScene* scene, unsigned program);
 	void Clear();
 	void Draw(unsigned program);
-	float3 GetPos();
-	std::vector<std::string> GetImageName(const char* fbx_name);
+	float3 GetPosition();
+	float3x3 GetRotation();
+	float3 GetScale();
+	std::vector<int> GetFaces();
+	std::vector<std::string> GetImagesNames();
+	float3 GetMax();
+	float3 GetMin();
 
 private:
 	float4x4 tranform = float4x4::identity;
 	std::vector<unsigned> materials;
 	std::vector<unsigned> textures;
 	std::vector<Mesh> meshes;
-	const char* imageName;
+	std::vector<int> faces;
+	std::vector<std::string> imagesNames;
+	float maxX, maxY, maxZ, minX, minY, minZ;
 };

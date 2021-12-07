@@ -23,9 +23,6 @@ public:
 	void ModelDropped(const char* file);
 	Model GetModel();
 	const char* Getfbx();
-	std::vector<std::string> Getimage();
-
-
 
 private:
 	unsigned triangleVBO;

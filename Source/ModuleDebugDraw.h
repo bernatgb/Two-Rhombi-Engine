@@ -21,9 +21,14 @@ public:
 	bool            CleanUp();
 
     void            Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height);
+    
+    bool            GetDebugDrawEnabled();
+    void            SetDebugDrawEnabled();
+
 private:
 
     static DDRenderInterfaceCoreGL* implementation;
+    bool enabled = true;
 };
 
 #endif /* _MODULE_DEBUGDRAW_H_ */

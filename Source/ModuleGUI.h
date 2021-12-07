@@ -37,10 +37,14 @@ public:
 	bool CleanUp();
 
 	update_status Draw();
+	void DrawAbout(bool* about);
+	void DrawConfig(bool* config);
 
 private:
 	bool demo = false;
+	bool about = false;
 	bool show_app_log = false;
+	bool config = false;
 	HardwareInfo hardware;
 	SoftwareInfo software;
 	std::vector<float> fps_log;

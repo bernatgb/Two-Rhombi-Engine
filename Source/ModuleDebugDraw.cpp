@@ -608,8 +608,11 @@ bool ModuleDebugDraw::CleanUp()
 
 update_status  ModuleDebugDraw::Update()
 {
-    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
-    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+    if (enabled)
+    {
+        dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+        dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+    }
 
 	return UPDATE_CONTINUE;
 }
@@ -623,4 +626,12 @@ void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned 
     dd::flush();
 }
 
+bool ModuleDebugDraw::GetDebugDrawEnabled()
+{
+    return enabled;
+}
 
+void ModuleDebugDraw::SetDebugDrawEnabled()
+{
+    enabled = !enabled;
+}

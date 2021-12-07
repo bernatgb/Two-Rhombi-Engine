@@ -24,7 +24,7 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
-	CONSOLELOG("Creating Renderer context");
+	CONSOLELOG("Creating Renderer context.");
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -39,12 +39,12 @@ bool ModuleRender::Init()
 	
 	GLenum err = glewInit();
 	// ... check for errors
-	CONSOLELOG("Using Glew %s", glewGetString(GLEW_VERSION));
+	CONSOLELOG("Using Glew %s.", glewGetString(GLEW_VERSION));
 	// Should be 2.0
 
-	CONSOLELOG("Vendor: %s", glGetString(GL_VENDOR));
-	CONSOLELOG("Renderer: %s", glGetString(GL_RENDERER));
-	CONSOLELOG("OpenGL version supported %s", glGetString(GL_VERSION));
+	CONSOLELOG("Vendor: %s.", glGetString(GL_VENDOR));
+	CONSOLELOG("Renderer: %s.", glGetString(GL_RENDERER));
+	CONSOLELOG("OpenGL version supported %s.", glGetString(GL_VERSION));
 	CONSOLELOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	glEnable(GL_DEPTH_TEST); // Enable depth test
@@ -130,7 +130,7 @@ update_status ModuleRender::PostUpdate()
 // Called before quitting
 bool ModuleRender::CleanUp()
 {
-	CONSOLELOG("Destroying renderer");
+	CONSOLELOG("Destroying renderer.");
 
 	//Destroy window
 	SDL_GL_DeleteContext(context);
