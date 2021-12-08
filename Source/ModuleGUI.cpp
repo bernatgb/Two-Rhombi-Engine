@@ -265,7 +265,10 @@ void ModuleGUI::DrawConfig(bool* config)
 			ImGui::Text("Position: (%f,%f,%f)", transform.Col(0).x, transform.Col(0).y, transform.Col(0).z);
 			ImGui::Text("Front: (%f,%f,%f)", transform.Col(1).x, transform.Col(1).y, transform.Col(1).z);
 			ImGui::Text("Up: (%f,%f,%f)", transform.Col(2).x, transform.Col(2).y, transform.Col(2).z);
-			ImGui::Text("Camera speed: %f", App->camera->GetCameraSpeed());
+			float3 cross = transform.Col(2).Cross(transform.Col(1));
+			ImGui::Text("Up x Front: (%f,%f,%f)", cross.x, cross.y, cross.z);
+			ImGui::Text("Camera speed: %i", (int)App->camera->GetCameraSpeed());
+			ImGui::Text("Horizontal FOV: %i degrees", (int)App->camera->GetHfov());
 		}
 
 		if (ImGui::CollapsingHeader("Model"))

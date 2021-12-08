@@ -15,7 +15,8 @@ public:
 	unsigned LoadImage(const char* image);
 	void LoadTexture(unsigned program);
 	unsigned LoadTextureFromMaterial(unsigned image, unsigned program);
-	unsigned LoadTextureFromImage(const char* image, unsigned program);
+	unsigned LoadTextureFromImage(const char* image, const char* fbx_name, unsigned program);
+	unsigned LoadTextureFromImageDropped(const char* image, unsigned program);
 
 private:
 	//unsigned imageID;

@@ -15,6 +15,7 @@ public:
 
 	void MoveCamera(char direction);
 	void RotateCamera(char rotarion);
+	void ZoomCamera(char zoom);
 	void OrbitCamera(float3 position);
 	void DoubleSpeed(bool shiftPressed);
 	void TripleSpeed(bool shiftPressed);
@@ -26,6 +27,7 @@ public:
 	float4x4 GetProjectionMatrix();
 	float3x3 GetTransform();
 	float GetCameraSpeed();
+	float GetHfov();
 	void SetCamera(float3 max, float3 min);
 
 private:

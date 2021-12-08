@@ -79,18 +79,19 @@ void ModuleCamera::MoveCamera(char direction)
 void ModuleCamera::RotateCamera(char rotation)
 {
 	float3x3 newOrientation;
+	float3 upXfront = frustum.Up().Cross(frustum.Front());
 
 	switch (rotation)
 	{
 	// Have up/down arrow keys rotate the camera’s Pitch (X axis)
 	case 'u':
-		newOrientation = float3x3::RotateX(-0.05f);
+		newOrientation = float3x3::RotateAxisAngle(upXfront, -0.05f);
 		frustum.SetFront(newOrientation.MulDir(frustum.Front().Normalized()));
 		frustum.SetUp(newOrientation.MulDir(frustum.Up().Normalized()));
 		break;
 
 	case 'd':
-		newOrientation = float3x3::RotateX(0.05f);
+		newOrientation = float3x3::RotateAxisAngle(upXfront, 0.05f);
 		frustum.SetFront(newOrientation.MulDir(frustum.Front().Normalized()));
 		frustum.SetUp(newOrientation.MulDir(frustum.Up().Normalized()));
 		break;
@@ -108,6 +109,33 @@ void ModuleCamera::RotateCamera(char rotation)
 	}
 
 	view = float4x4(frustum.ViewMatrix());
+	projection = frustum.ProjectionMatrix();
+}
+
+void ModuleCamera::ZoomCamera(char zoom)
+{
+	float hFov = RadToDeg(frustum.HorizontalFov());
+	float aspectRatio = frustum.AspectRatio();
+
+	switch (zoom)
+	{
+	case 'i':
+		hFov -= 1.0f * speed;
+		if (hFov >= 0) 
+			frustum.SetHorizontalFovAndAspectRatio(DegToRad(hFov), aspectRatio);
+		else
+		{
+			CONSOLELOG("Minimum Horizontal FOV reached.");
+			CONSOLELOG("You are trying to reduce the Horizontal FOV below 0.");
+			hFov += 1.0f * speed;
+		}		
+		break;
+	case 'o':
+		hFov += 1.0f * speed;
+		frustum.SetHorizontalFovAndAspectRatio(DegToRad(hFov), aspectRatio);
+		break;
+	}
+
 	projection = frustum.ProjectionMatrix();
 }
 
@@ -197,13 +225,17 @@ float3x3 ModuleCamera::GetTransform()
 	float3 front = frustum.Front();
 	float3 up = frustum.Up();
 	float3x3 transform = float3x3(pos, front, up);
-	float3 a = transform.Col(0);
 	return transform;
 }
 
 float ModuleCamera::GetCameraSpeed()
 {
 	return speed;
+}
+
+float ModuleCamera::GetHfov()
+{
+	return RadToDeg(frustum.HorizontalFov());
 }
 
 void ModuleCamera::SetCamera(float3 max, float3 min)

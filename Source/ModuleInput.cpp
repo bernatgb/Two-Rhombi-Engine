@@ -17,7 +17,7 @@ ModuleInput::~ModuleInput()
 // Called before render is available
 bool ModuleInput::Init()
 {
-	CONSOLELOG("Init SDL input event system");
+	CONSOLELOG("Init SDL input event system.");
 	bool ret = true;
 	SDL_Init(0);
 
@@ -46,13 +46,13 @@ update_status ModuleInput::Update()
                     App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
                 break;
 			case SDL_MOUSEWHEEL: // Mouse wheel rotation
-				if (sdlEvent.wheel.y > 0) // move forwards
+				if (sdlEvent.wheel.y > 0) // zoom in
 				{
-					App->camera->MoveCamera('w');
+					App->camera->ZoomCamera('i');
 				}
-				else if (sdlEvent.wheel.y < 0) // move backwards
+				else if (sdlEvent.wheel.y < 0) // zoom out
 				{
-					App->camera->MoveCamera('s');
+					App->camera->ZoomCamera('o');
 				}
 				break;
 			case SDL_MOUSEMOTION:
@@ -89,8 +89,25 @@ update_status ModuleInput::Update()
 				}
 				break;
 			case SDL_DROPFILE:
-				CONSOLELOG("New model dropped.");
-				App->exercise->ModelDropped(sdlEvent.drop.file);
+				CONSOLELOG("File dropped ----------");
+				if (strcmp(strrchr(sdlEvent.drop.file, '.'), ".fbx") == 0)
+				{
+					CONSOLELOG("New model dropped ----------");
+					App->exercise->ModelDropped(sdlEvent.drop.file);
+					Model model = App->exercise->GetModel();
+					float3 max = model.GetMax();
+					float3 min = model.GetMin();
+					App->camera->SetCamera(max, min);
+				}
+				if (strcmp(strrchr(sdlEvent.drop.file, '.'), ".png") == 0 || 
+					strcmp(strrchr(sdlEvent.drop.file, '.'), ".jpg") == 0 || 
+					strcmp(strrchr(sdlEvent.drop.file, '.'), ".jpeg") == 0)
+				{
+					CONSOLELOG("New texture dropped ----------");
+					Model model = App->exercise->GetModel();
+					model.LoadTextureDropped(sdlEvent.drop.file);
+				}
+
 				break;
 
         }
@@ -156,7 +173,7 @@ update_status ModuleInput::Update()
 	else if (keyboard[SDL_SCANCODE_F]) {
 		CONSOLELOG("<F> is pressed.");
 		Model model = App->exercise->GetModel();
-		float3 toLookAt = model.GetPos();
+		float3 toLookAt = model.GetPosition();
 		App->camera->LookAt(toLookAt);
 	}
 
@@ -164,7 +181,7 @@ update_status ModuleInput::Update()
 	else if (keyboard[SDL_SCANCODE_LALT] || keyboard[SDL_SCANCODE_RALT]) {
 		CONSOLELOG("<ALT> is pressed.");
 		Model model = App->exercise->GetModel();
-		float3 modelPos = model.GetPos();
+		float3 modelPos = model.GetPosition();
 		App->camera->OrbitCamera(modelPos);
 	}
 
@@ -175,27 +192,27 @@ update_status ModuleInput::Update()
 	}
 
 	// Have the camera speed double/triple if SHIFT is being pressed
-	while (keyboard[SDL_SCANCODE_LSHIFT]) {
-		CONSOLELOG("<LSHIFT> is pressed.");
-		lshiftWasPressed = true;
-		App->camera->DoubleSpeed(true);
-	}
 	if (lshiftWasPressed)
 	{
 		App->camera->DoubleSpeed(false);
 		lshiftWasPressed = false;
 	}
-
-	while (keyboard[SDL_SCANCODE_RSHIFT]) {
-		CONSOLELOG("<RSHIFT> is pressed.");
-		rshiftWasPressed = true;
-		App->camera->TripleSpeed(true);
+	if (keyboard[SDL_SCANCODE_LSHIFT]) {
+		CONSOLELOG("<LSHIFT> is pressed.");
+		lshiftWasPressed = true;
+		App->camera->DoubleSpeed(true);
 	}
+
 	if (rshiftWasPressed)
 	{
 		App->camera->TripleSpeed(false);
 		rshiftWasPressed = false;
 	}
+	if (keyboard[SDL_SCANCODE_RSHIFT]) {
+		CONSOLELOG("<RSHIFT> is pressed.");
+		rshiftWasPressed = true;
+		App->camera->TripleSpeed(true);
+	}	
 	
 	// Mouse rotation	
 	if (mouseRButtonDown && sdlEvent.type == SDL_MOUSEBUTTONUP && sdlEvent.button.button == SDL_BUTTON_RIGHT)

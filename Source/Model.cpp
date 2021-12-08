@@ -17,13 +17,15 @@ Model::~Model()
 void Model::Load(const char* image_name, const char* fbx_name, unsigned program)
 {
 	maxX = maxY = maxZ = minX = minY = minZ = 0.0f;
+	fbxFile = fbx_name;
+	programUsing = program;
 
 	const aiScene* scene = aiImportFile(fbx_name, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate);
 	if (scene)
 	{
 		CONSOLELOG("File %s imported successfully.", fbx_name);
 		//LoadMaterials(scene, image_name);
-		LoadTextures(scene, program);
+		LoadTextures(scene, fbx_name, program);
 		LoadMeshes(scene, program);
 	}
 	else
@@ -46,7 +48,7 @@ void Model::LoadMaterials(const aiScene* scene, const char* image_name)
 	}
 }
 
-void Model::LoadTextures(const aiScene* scene, unsigned program)
+void Model::LoadTextures(const aiScene* scene, const char* fbx_name, unsigned program)
 {
 	textures.reserve(materials.size());
 	aiString file;
@@ -54,8 +56,8 @@ void Model::LoadTextures(const aiScene* scene, unsigned program)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
 		{
-			CONSOLELOG("Texture added.");
-			textures.push_back(App->texture->LoadTextureFromImage(file.data, program));
+			CONSOLELOG("Loading textures.");
+			textures.push_back(App->texture->LoadTextureFromImage(file.data, fbx_name, program));
 			std::string s(file.data);
 			imagesNames.push_back(s);
 		}
@@ -115,6 +117,28 @@ void Model::Draw(unsigned program)
 	}
 }
 
+void Model::LoadTextureDropped(const char* textureFile)
+{
+	int numMaterials = textures.size();
+	textures.clear();
+	imagesNames.clear();
+	
+	const char* fbx = GetFBX();
+	const aiScene* scene = aiImportFile(fbx, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate);
+	if (scene)
+	{
+		textures.reserve(numMaterials);
+		unsigned program = GetProgram();
+		for (unsigned i = 0; i < numMaterials; ++i)
+		{
+			CONSOLELOG("Loading textures.");
+			textures.push_back(App->texture->LoadTextureFromMaterial(App->texture->LoadImage(textureFile), program));
+			imagesNames.push_back((std::string)textureFile);
+		}
+		LoadMeshes(scene, program);
+	}
+}
+
 float3 Model::GetPosition()
 {
 	return tranform.TranslatePart();
@@ -148,4 +172,14 @@ float3 Model::GetMax()
 float3 Model::GetMin()
 {
 	return float3(minX, minY, minZ);
+}
+
+unsigned Model::GetProgram()
+{
+	return programUsing;
+}
+
+const char* Model::GetFBX()
+{
+	return fbxFile;
 }
