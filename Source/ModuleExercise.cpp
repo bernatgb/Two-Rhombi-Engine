@@ -58,8 +58,8 @@ bool ModuleExercise::Init()
 	bakerhouseProgram = App->program->CreateProgram(vertexShaderIDb, fragmentShaderIDb);
 	*/
 
-	const char* vertexShaderLoaded = App->program->LoadShaderSource("..\\Source\\VertexShader.vert");
-	const char* fragmentShaderLoaded = App->program->LoadShaderSource("..\\Source\\FragmentShader.frag");
+	const char* vertexShaderLoaded = App->program->LoadShaderSource("textures\\VertexShader.vert");
+	const char* fragmentShaderLoaded = App->program->LoadShaderSource("textures\\FragmentShader.frag");
 
 	unsigned vertexShaderID = App->program->CompileShader(GL_VERTEX_SHADER, vertexShaderLoaded);
 	unsigned fragmentShaderID = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentShaderLoaded);
